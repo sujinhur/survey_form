@@ -46,3 +46,11 @@ class Compare(models.Model):
     date2 = models.CharField(max_length=15)
     date3 = models.CharField(max_length=15)
     date4 = models.CharField(max_length=15)
+
+# 걸음 수 데이터 
+class StepCountData(models.Model):
+    date = models.CharField(max_length=15)
+    stepcount = models.IntegerField()
+
+    def __str__(self):
+        return self.date
