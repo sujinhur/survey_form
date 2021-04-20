@@ -7,12 +7,12 @@ def index(request):
     return HttpResponse('hello')
 
 def introduce(request):
-    return HttpResponse('introduceapp')
+    return render(request, 'survey/intro.html')
 
 
-def vis_answer(request):
-    return HttpResponse('answer your idea')
+def problem(request):
+    return render(request, 'survey/problem.html')
 
 
 def result(request):
-    return HttpResponse('endform')
+    return render(request, 'survey/result.html')
