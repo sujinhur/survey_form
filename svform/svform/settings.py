@@ -119,3 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+## static/ 앱 내에서 디렉터리 사용하는 경우 정의해야함(위 링크 참고 - 정적 파일 구성)
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
