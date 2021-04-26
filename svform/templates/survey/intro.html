@@ -1,26 +1,21 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <!-- 합쳐지고 최소화된 최신 CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+{% extends "survey/base.html" %}
 
-        <!-- 부가적인 테마 -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+{% block content %}
+        
 
-        <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    </head>
-    <body>
-        <div>
-            <h1>INTRODUCE</h1>
-        </div>
-        <div>
-            설문조사가  시작됩니다.
-        </div>
-        <div>
-            <button>START</button>
-        </div> 
-    </body>
-</html>
+    <div class = "container ">
+
+            <h1 class="text-center">INTRODUCE</h1>
+        
+            <p  class="lead">설문조사가  시작됩니다.설문조사가  시작됩니다.설문조사가  시작됩니다.설문조사가  
+                시작됩니다.설문조사가  시작됩니다.설문조사가  시작됩니다.설문조사가  시작됩니다.
+                설문조사가  시작됩니다.설문조사가  시작됩니다.설문조사가  시작됩니다.설문조사가  
+                설문조사가  시작됩니다.설문조사가  시작됩니다.설문조사가  시작됩니다.시작됩니다.</p>
+            <div class="text-center">
+                <button type="button" class="btn btn-default btn-lg">START</button>
+            </div>
+
+    </div>  
+                   
+
+{% endblock %}
