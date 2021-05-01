@@ -1,3 +1,17 @@
 h1 {
-    color: #0d9e25;
+    font-weight: bold;
+    padding-top: 5%;
+}
+
+.html, body {
+    height : 100%
+}
+
+.container {
+    margin-top: 2%;
+}
+.row {
+    margin-bottom: 1%;
+    margin-left: 1%;
+    margin-right: 1%;
 }

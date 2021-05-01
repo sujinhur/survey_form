@@ -2,10 +2,12 @@
 
 {% block content %}
 
-    <div class = "container ">
-        <h3>Q. 다음 시각화를 보고 텍스트를 입력하세요.</h3> 
+    <div class = "container">
+        <div class="row">
+            <h3>Q. 다음 시각화를 보고 텍스트를 입력하세요.</h3> 
+        </div>
     
-        <div>
+        <div class="row">
             시각화(js 사용)
         </div>
         <script>
@@ -14,8 +16,8 @@
  
         <textarea class="form-control" rows="5"></textarea>
 
-        <div class="text-center">
-            <button type="button" class="btn btn-default btn-lg">NEXT</button>
+        <div class="d-grid col-4 mx-auto">
+            <button type="button" class="btn btn-dark btn-lg">NEXT</button>
         </div>
     </div>
 {% endblock %}
