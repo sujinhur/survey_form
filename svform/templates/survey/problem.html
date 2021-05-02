@@ -4,20 +4,27 @@
 
     <div class = "container">
         <div class="row">
-            <h3>Q. 다음 시각화를 보고 텍스트를 입력하세요.</h3> 
+            <h3>Q. 다음 시각화를 보기 위해서 챗봇에게 질문할 텍스트를 입력해주세요.</h3> 
         </div>
     
         <div class="row">
-            시각화(js 사용)
+            <p class="text-center">시각화(js 사용)</p>
+        
+            <!-- <script>
+                
+            </script> -->
         </div>
-        <script>
-            
-        </script>
  
-        <textarea class="form-control" rows="5"></textarea>
+        <form>
+            <div class="row">
+                <textarea class="form-control-lg" placeholder="텍스트를 입력해주세요" rows="5"></textarea>
+            </div>
+            
+            <div class="d-grid col-4 mx-auto">
+                <button type="button" class="btn btn-dark btn-lg">NEXT</button>
+            </div>
+    
+        </form>
 
-        <div class="d-grid col-4 mx-auto">
-            <button type="button" class="btn btn-dark btn-lg">NEXT</button>
-        </div>
     </div>
 {% endblock %}
