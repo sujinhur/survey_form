@@ -8,11 +8,11 @@
         </div>
     
         <div class="d-grid col-6 mx-auto">
-            <p>시각화(js 사용)시각화(js 사용)시각화(js 사용)시각화(js 사용)시각화(js 사용)
-                시각화(js 사용)시각화(js 사용)시각화(js 사용)시각화(js 사용)시각화(js 사용)
-                시각화(js 사용)시각화(js 사용)시각화(js 사용)시각화(js 사용)시각화(js 사용)
-                시각화(js 사용)시각화(js 사용)시각화(js 사용)시각화(js 사용)시각화(js 사용)
-            </p>
+            {% for i in date_list %}
+
+                {{ i.date }}
+                {{i.stepcount}}
+            {% endfor %}
         
             <!-- <script>
                 
@@ -25,7 +25,11 @@
             </div>
             
             <div class="d-grid col-4 mx-auto">
-                <button type="button" class="btn btn-dark btn-lg" onclick="location.href='result'">NEXT</button>
+                {% if next_page_index == 31 %}
+                <a class="btn btn-lg btn-dark" href="{% url 'result' %}" role="button">NEXT</a>
+                {% else %}
+                <a class="btn btn-lg btn-dark" href="{% url 'problem' next_page_index %}" role="button">NEXT</a>
+                {% endif %}
             </div>
     
         </form>
