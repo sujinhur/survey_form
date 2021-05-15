@@ -8,8 +8,15 @@
         </div>
     
         <div class="d-grid col-6 mx-auto">
-            {% for i in date_list %}
+            {% if date_list|length == 2 %}         
+                {% for i in date_list.1 %}
+                    {{ i.date }}
+                    {{i.stepcount}}
+                {% endfor %}
+                <h1>비교</h1>
+            {% endif %}
 
+            {% for i in date_list.0 %}
                 {{ i.date }}
                 {{i.stepcount}}
             {% endfor %}
