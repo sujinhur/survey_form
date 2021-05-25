@@ -29,31 +29,22 @@
     </div>
 
     <script>
-       
+        var label = "{{ label }}";
         var date_1 = "{{ date_1 }}".replace(/&#x27;/g, "\"");
-        console.log(date_1);
         var date_2 = "{{ date_2 }}".replace(/&#x27;/g, "\"");
-        console.log(date_2);
         var stepcount_1 = "{{ stepcount_1 }}".replace(/&#x27;/g, "\"");
         var stepcount_2 = "{{ stepcount_2 }}".replace(/&#x27;/g, "\"");
-        var label = "{{ label }}";
+        var legend_value = "{{ legend_value }}".replace(/&#x27;/g, "\"");
         date_1 = JSON.parse(date_1);
         date_2 = JSON.parse(date_2);
         stepcount_1 = JSON.parse(stepcount_1);
         stepcount_2 = JSON.parse(stepcount_2);
 
-        
-     
-        console.log(stepcount_1);
-        console.log(label);
-        
-    
-
         if(label == 'Compare') {
-            $.getScript("../../static/js/linechart.js");
+            $.getScript("../../static/js/compare_line.js");
         }
         else {
-            $.getScript("../../static/js/barchart.js");
+            $.getScript("../../static/js/today_specify_bar.js");
         }
     </script>
 {% endblock %}

@@ -18,36 +18,49 @@ def introduce(request):
 
 # 시각화 및 텍스트 입력 페이지
 def problem(request, page_index):
+        
     next_page_index = page_index + 1
 
+    # 세션에 저장된 db에 검색할 순서 
     q_list = {}
     q_list = request.session.get('q_list')
+    print(q_list)
+    print(q_list[page_index-1])
     
+    # 날짜, 라벨 가져오기
     start_date, end_date, label = get_code(page_index, q_list)
+    
+    # 해당 기간 걸음수 받아오기
     date, stepcount = date_stepcount_data(start_date, end_date)
 
+    # 범례값 
+    legend_value = create_legend_value(start_date, end_date, label)
+
+    # 시각화할 데이터 전처리
     vis_date_1 = []
     vis_date_2 = []
     vis_stepcount_1 = []
     vis_stepcount_2 = []
-    if type(start_date) == list:
-        vis_date_1, vis_stepcount_1 = vis_data(date[0], stepcount[0])
-        vis_date_2, vis_stepcount_2 = vis_data(date[1], stepcount[1])
+
+    if label == 'Compare':
+        vis_date_1, vis_stepcount_1 = compare_vis_data(date[0], stepcount[0])
+        vis_date_2, vis_stepcount_2 = compare_vis_data(date[1], stepcount[1])
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
         vis_date_2, vis_stepcount_2 = str_date(vis_date_2, vis_stepcount_2)
     else:
-        vis_date_1, vis_stepcount_1 = vis_data(date, stepcount)
+        vis_date_1, vis_stepcount_1 = today_vis_data(date, stepcount)
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
 
-
     context = {
+        'next_page_index':next_page_index,
+        'label': label,
         'date_1': vis_date_1,
         'stepcount_1':vis_stepcount_1,
         'date_2': vis_date_2,
         'stepcount_2':vis_stepcount_2,
-        'label': label,
-        'next_page_index':next_page_index,
+        'legend_value':legend_value,
     }
+
     return render(request, 'survey/problem.html', context)
 
 # 종료 페이지
@@ -97,34 +110,65 @@ def date_stepcount_data(start_date, end_date):
             stepcount.append(StepCountData.objects.get(id=i).stepcount)
     return date, stepcount
 
-# 시각화 할 데이터만 정리
-def vis_data(date, stepcount):
+# 오늘 기준, 특정 기간 - 시각화 할 데이터만 정리
+def today_vis_data(date, stepcount):
     vis_date = []
     vis_stepcount = []
-
     
     if len(date) < 32:
-        vis_date = date
+        for i in range(len(date)):
+            vis_date.append(date[i].day)    
         vis_stepcount = stepcount
 
     elif len(date) < 168:
         tmp_stepcount = 0
         for i in range(len(date)):           
             tmp_stepcount = tmp_stepcount + stepcount[i]
-            if i % 7 == 0:
-                vis_date.append(date[i])
+            if (i+1) % 7 == 0:
+                vis_date.append(str(date[i-6].month) + "월 " + str(date[i-6].day) + "일")
                 vis_stepcount.append(tmp_stepcount//7)
                 tmp_stepcount = 0
 
     else:
+        tmp_stepcount = 0
         for i in range(len(date)):
-
-            if date[i].month in vis_date == False:
-                vis_date.append(date[i].month)
+            tmp_stepcount = tmp_stepcount + stepcount[i]
+            if date[i].day == 1:
+                vis_date.append(str(date[i].month) + "월")
+                if len(vis_date) >= 2:
+                    vis_stepcount.append(tmp_stepcount//date[i-1].day)
+                    tmp_stepcount = 0
+            if i == (len(date) -1):
                 vis_stepcount.append(tmp_stepcount//date[i].day)
-                tmp_stepcount = 0
-            else:
-                tmp_stepcount = tmp_stepcount + stepcount[i]
+            
+    return vis_date, vis_stepcount
+
+
+# 비교 - 시각화 할 데이터만 정리
+def compare_vis_data(date, stepcount):
+    vis_date = []
+    vis_stepcount = []
+    
+    if len(date) < 8:
+        vis_date = ['월', '화', '수', '목', '금', '토', '일']
+        vis_stepcount = stepcount
+
+    elif len(date) < 32:
+        for i in range(len(date)):
+            vis_date.append(date[i].day)    
+        vis_stepcount = stepcount
+
+    else:
+        tmp_stepcount = 0
+        for i in range(len(date)):
+            tmp_stepcount = tmp_stepcount + stepcount[i]
+            if date[i].day == 1:
+                vis_date.append(str(date[i].month) + "월")
+                if len(vis_date) >= 2:
+                    vis_stepcount.append(tmp_stepcount//date[i-1].day)
+                    tmp_stepcount = 0
+            if i == (len(date) -1):
+                vis_stepcount.append(tmp_stepcount//date[i].day)
 
     return vis_date, vis_stepcount
 
@@ -136,3 +180,28 @@ def str_date(date, stepcount):
         str_date_list.append(str(date[i]))
         str_stepcount_list.append(str(stepcount[i]))
     return str_date_list, str_stepcount_list
+
+# 범례 구하기
+def create_legend_value(start_date, end_date, label):
+    if label == "Today":
+        if (end_date - start_date).days < 32:
+            legend_value = str(end_date.month) + "월"
+        else:
+            legend_value = None
+    elif label == "Specify":
+        if (end_date - start_date).days < 32:
+            legend_value = str(end_date.year) + "년 " + str(end_date.month) + "월"
+        else:
+            legend_value = str(end_date.year) + "년"
+    else:
+        if (end_date[0] - start_date[0]).days < 8:
+            legend_value = [str(start_date[0]) + ' ~ ' + str(end_date[0]), str(start_date[1]) + ' ~ ' + str(end_date[1])]
+        elif (end_date[0] - start_date[0]).days > 35:
+            legend_value = [str(start_date[0].year) + "년", str(start_date[1].year) + "년"]
+        else: 
+            if start_date[0] == start_date[1]:
+                legend_value = [str(start_date[0].year) + "년 " + str(start_date[0].month) + '월', str(start_date[1].year) + "년 " + str(start_date[1].month) + '월']
+            else:
+                legend_value = [str(start_date[0].month) + '월', str(start_date[1].month) + '월']
+
+    return legend_value
