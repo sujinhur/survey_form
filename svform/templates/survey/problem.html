@@ -41,10 +41,10 @@
         stepcount_2 = JSON.parse(stepcount_2);
 
         if(label == 'Compare') {
-            $.getScript("../../static/js/compare_line.js");
+            $.getScript("../../static/js/linechart.js");
         }
         else {
-            $.getScript("../../static/js/today_specify_bar.js");
+            $.getScript("../../static/js/barchart.js");
         }
     </script>
 {% endblock %}
