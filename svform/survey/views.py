@@ -185,23 +185,20 @@ def str_date(date, stepcount):
 def create_legend_value(start_date, end_date, label):
     if label == "Today":
         if (end_date - start_date).days < 32:
-            legend_value = str(end_date.month) + "월"
+            legend_value = "~ " + str(end_date.month) + "월"
         else:
-            legend_value = None
+            legend_value = "~ " + str(end_date.year) + "년"
     elif label == "Specify":
         if (end_date - start_date).days < 32:
-            legend_value = str(end_date.year) + "년 " + str(end_date.month) + "월"
+            legend_value = "~ " + str(end_date.year) + "년 " + str(end_date.month) + "월"
         else:
-            legend_value = str(end_date.year) + "년"
+            legend_value = "~ " + str(end_date.year) + "년"
     else:
         if (end_date[0] - start_date[0]).days < 8:
             legend_value = [str(start_date[0]) + ' ~ ' + str(end_date[0]), str(start_date[1]) + ' ~ ' + str(end_date[1])]
         elif (end_date[0] - start_date[0]).days > 35:
             legend_value = [str(start_date[0].year) + "년", str(start_date[1].year) + "년"]
         else: 
-            if start_date[0] == start_date[1]:
-                legend_value = [str(start_date[0].year) + "년 " + str(start_date[0].month) + '월', str(start_date[1].year) + "년 " + str(start_date[1].month) + '월']
-            else:
-                legend_value = [str(start_date[0].month) + '월', str(start_date[1].month) + '월']
+            legend_value = [str(start_date[0].year) + "년 " + str(start_date[0].month) + '월', str(start_date[1].year) + "년 " + str(start_date[1].month) + '월']
 
     return legend_value

@@ -1,3 +1,5 @@
+legend_value = JSON.parse(legend_value);
+
 // 쿼리 결과 값 저장 변수
 dataset = [];
 dataset1 = [];
@@ -23,7 +25,7 @@ data_min.push({'value' : d3.min(dataset1, d => d.value)});
 
 // 기본적인 마진값
 var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 460 - margin.left - margin.right,
+    width = 700 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom
 
 // canvas 사이즈
