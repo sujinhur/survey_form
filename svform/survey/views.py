@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import StepCountData, QuestionCode
+from .models import StepCountData, QuestionCode, ResultData
 import datetime
 from dateutil.relativedelta import relativedelta
 import random
@@ -18,50 +18,60 @@ def introduce(request):
 
 # 시각화 및 텍스트 입력 페이지
 def problem(request, page_index):
+    if request.method == "POST":
+        next_page_index = page_index + 1
+
+        # 세션에 저장된 db에 검색할 순서 
+        q_list = {}
+        q_list = request.session.get('q_list')
         
-    next_page_index = page_index + 1
+        label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, data = maincode(page_index, q_list)
 
-    # 세션에 저장된 db에 검색할 순서 
-    q_list = {}
-    q_list = request.session.get('q_list')
-    print(q_list)
-    print(q_list[page_index-1])
-    
-    # 날짜, 라벨 가져오기
-    start_date, end_date, label = get_code(page_index, q_list)
-    
-    # 해당 기간 걸음수 받아오기
-    date, stepcount = date_stepcount_data(start_date, end_date)
+        answer = request.POST.get('answer')
 
-    # 범례값 
-    legend_value = create_legend_value(start_date, end_date, label)
+        context = {
+            'next_page_index':next_page_index,
+            'label': label,
+            'date_1': vis_date_1,
+            'stepcount_1':vis_stepcount_1,
+            'date_2': vis_date_2,
+            'stepcount_2':vis_stepcount_2,
+            'legend_value':legend_value,
+            'answer' : answer,
+        }
 
-    # 시각화할 데이터 전처리
-    vis_date_1 = []
-    vis_date_2 = []
-    vis_stepcount_1 = []
-    vis_stepcount_2 = []
+        resultdata = ResultData()
+        resultdata.pid = request.session.get('id')
+        resultdata.sequence = page_index - 1
+        
+        resultdata.label = label
+        resultdata.data = data
+        resultdata.answer = answer
+        resultdata.q_dsc = description
+        resultdata.save()
 
-    if label == 'Compare':
-        vis_date_1, vis_stepcount_1 = compare_vis_data(date[0], stepcount[0])
-        vis_date_2, vis_stepcount_2 = compare_vis_data(date[1], stepcount[1])
-        vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
-        vis_date_2, vis_stepcount_2 = str_date(vis_date_2, vis_stepcount_2)
+        return render(request, 'survey/problem.html', context)
+
     else:
-        vis_date_1, vis_stepcount_1 = today_vis_data(date, stepcount)
-        vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
+        next_page_index = page_index + 1
 
-    context = {
-        'next_page_index':next_page_index,
-        'label': label,
-        'date_1': vis_date_1,
-        'stepcount_1':vis_stepcount_1,
-        'date_2': vis_date_2,
-        'stepcount_2':vis_stepcount_2,
-        'legend_value':legend_value,
-    }
+        # 세션에 저장된 db에 검색할 순서 
+        q_list = {}
+        q_list = request.session.get('q_list')
+        
+        label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, data = maincode(page_index, q_list)
 
-    return render(request, 'survey/problem.html', context)
+        context = {
+            'next_page_index':next_page_index,
+            'label': label,
+            'date_1': vis_date_1,
+            'stepcount_1':vis_stepcount_1,
+            'date_2': vis_date_2,
+            'stepcount_2':vis_stepcount_2,
+            'legend_value':legend_value,
+        }
+
+        return render(request, 'survey/problem.html', context)
 
 # 종료 페이지
 def result(request):
@@ -80,9 +90,10 @@ def random_dblist():
 def get_code(page_index, db_index): 
     code = QuestionCode.objects.get(id=db_index[page_index - 1]).code
     label = QuestionCode.objects.get(id=db_index[page_index - 1]).label
+    description = QuestionCode.objects.get(id=db_index[page_index - 1]).description
     loc = {}
     exec(code, globals(), loc)
-    return loc["start_date"], loc["end_date"], label
+    return loc["start_date"], loc["end_date"], label, description
 
 # 날짜, 걸음수 데이터 받아오기
 def date_stepcount_data(start_date, end_date):
@@ -202,3 +213,39 @@ def create_legend_value(start_date, end_date, label):
             legend_value = [str(start_date[0].year) + "년 " + str(start_date[0].month) + '월', str(start_date[1].year) + "년 " + str(start_date[1].month) + '월']
 
     return legend_value
+
+# 메인 코드
+def maincode(page_index, q_list):
+    # 날짜, 라벨 가져오기
+    start_date, end_date, label, description = get_code(page_index, q_list)
+    
+    # 해당 기간 걸음수 받아오기
+    date, stepcount = date_stepcount_data(start_date, end_date)
+
+    # 범례값 
+    legend_value = create_legend_value(start_date, end_date, label)
+
+    # 시각화할 데이터 전처리
+    vis_date_1 = []
+    vis_date_2 = []
+    vis_stepcount_1 = []
+    vis_stepcount_2 = []
+    data = []
+
+    if label == 'Compare':
+        vis_date_1, vis_stepcount_1 = compare_vis_data(date[0], stepcount[0])
+        vis_date_2, vis_stepcount_2 = compare_vis_data(date[1], stepcount[1])
+        vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
+        vis_date_2, vis_stepcount_2 = str_date(vis_date_2, vis_stepcount_2)
+        data.append("SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date[0]) + "'" + " and " + "'" + str(end_date[0]) + "'")
+        data.append("SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date[1]) + "'" + " and " + "'" + str(end_date[1]) + "'")
+    else:
+        vis_date_1, vis_stepcount_1 = today_vis_data(date, stepcount)
+        vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
+        data.append("SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date) + "'" + " and " + "'" + str(end_date) + "'")
+
+    print(data)
+    print(vis_date_1, vis_stepcount_1)
+    print(vis_date_2, vis_stepcount_2)
+
+    return label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, data

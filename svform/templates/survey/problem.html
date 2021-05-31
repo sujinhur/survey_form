@@ -11,16 +11,17 @@
             <div class="col-md-8" id="chart"></div>
         </div>
  
-        <form>
+        <form action="{% url 'problem' next_page_index %}" method="post">
             <div class="row">
-                <textarea class="form-control-lg" placeholder="텍스트를 입력해주세요" rows="5"></textarea>
+                <textarea class="form-control-lg" placeholder="텍스트를 입력해주세요" rows="5" name="answer"></textarea>
             </div>
             
             <div class="d-grid col-4 mx-auto">
                 {% if next_page_index == 31 %}
                 <a class="btn btn-lg btn-dark" href="{% url 'result' %}" role="button">NEXT</a>
                 {% else %}
-                <a class="btn btn-lg btn-dark" href="{% url 'problem' next_page_index %}" role="button">NEXT</a>
+                <!-- <a class="btn btn-lg btn-dark" href="{% url 'problem' next_page_index %}" role="button">NEXT</a> -->
+                <input type="submit" class="btn btn-lg btn-dark" value="NEXT">
                 {% endif %}
             </div>
     

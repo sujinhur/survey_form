@@ -7,17 +7,18 @@ from django.db.models.base import Model
 # pid - user ip address, sequence - answer count, pnp - usable or not, 
 # label - labeling, data - query, answer - user answer
 class ResultData(models.Model):
-    pid = models.IntegerField() 
+    pid = models.CharField(max_length=60) 
     sequence = models.IntegerField(default=0)
-    pnp = models.BooleanField()
+    pnp = models.BooleanField(default=False)
     Label_Choices = [
         ('Today', 'Today'),
         ('Specify', 'Specify'),
         ('Compare', 'Compare'),
     ]
     label = models.CharField(max_length=8, choices=Label_Choices)
-    data = models.CharField(max_length=100)
+    data = models.CharField(max_length=200)
     answer = models.TextField()
+    q_dsc = models.CharField(max_length=50, default="db_index_dsc")
 
 
 # Today dataset(resultdata에서 label이 Today이고 pnp가 True인 data)
