@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect
+from django.urls import reverse
 from django.http import HttpResponse
 from .models import StepCountData, QuestionCode, ResultData
 import datetime
@@ -14,43 +15,26 @@ def index(request):
 def introduce(request):
     db_list = random_dblist()
     request.session['q_list'] = db_list
+    request.session['id'] = request.session.session_key
     return render(request, 'survey/intro.html')
 
 # 시각화 및 텍스트 입력 페이지
 def problem(request, page_index):
     if request.method == "POST":
-        next_page_index = page_index + 1
-
-        # 세션에 저장된 db에 검색할 순서 
-        q_list = {}
-        q_list = request.session.get('q_list')
         
-        label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, data = maincode(page_index, q_list)
-
         answer = request.POST.get('answer')
 
-        context = {
-            'next_page_index':next_page_index,
-            'label': label,
-            'date_1': vis_date_1,
-            'stepcount_1':vis_stepcount_1,
-            'date_2': vis_date_2,
-            'stepcount_2':vis_stepcount_2,
-            'legend_value':legend_value,
-            'answer' : answer,
-        }
-
         resultdata = ResultData()
-        resultdata.pid = request.session.get('id')
-        resultdata.sequence = page_index - 1
+        resultdata.pid = request.session['id']
+        resultdata.sequence = request.session['sequence']
         
-        resultdata.label = label
-        resultdata.data = data
+        resultdata.label = request.session['label']
+        resultdata.data = request.session['data']
         resultdata.answer = answer
-        resultdata.q_dsc = description
+        resultdata.q_dsc = request.session['description']
         resultdata.save()
 
-        return render(request, 'survey/problem.html', context)
+        return HttpResponseRedirect(reverse('problem', args=(page_index,)))
 
     else:
         next_page_index = page_index + 1
@@ -60,6 +44,12 @@ def problem(request, page_index):
         q_list = request.session.get('q_list')
         
         label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, data = maincode(page_index, q_list)
+
+        request.session['sequence'] = page_index
+        request.session['label'] = label
+        request.session['data'] = data
+        request.session['description'] = description
+
 
         context = {
             'next_page_index':next_page_index,

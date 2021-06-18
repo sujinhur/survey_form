@@ -12,6 +12,7 @@
         </div>
  
         <form action="{% url 'problem' next_page_index %}" method="post">
+            {% csrf_token %}
             <div class="row">
                 <textarea class="form-control-lg" placeholder="텍스트를 입력해주세요" rows="5" name="answer"></textarea>
             </div>
