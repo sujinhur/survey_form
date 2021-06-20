@@ -14,21 +14,32 @@
         <form action="{% url 'problem' next_page_index %}" method="post">
             {% csrf_token %}
             <div class="row">
-                <textarea class="form-control-lg" placeholder="텍스트를 입력해주세요" rows="5" name="answer"></textarea>
+                <textarea class="form-control-lg" placeholder="텍스트를 입력해주세요" rows="5" name="answer" id="answer" required></textarea>
             </div>
             
             <div class="d-grid col-4 mx-auto">
-                {% if next_page_index == 31 %}
-                <a class="btn btn-lg btn-dark" href="{% url 'result' %}" role="button">NEXT</a>
-                {% else %}
-                <!-- <a class="btn btn-lg btn-dark" href="{% url 'problem' next_page_index %}" role="button">NEXT</a> -->
                 <input type="submit" class="btn btn-lg btn-dark" value="NEXT">
-                {% endif %}
             </div>
     
         </form>
 
     </div>
+
+    <script>
+        const answer = document.getElementById('answer');
+
+        answer.addEventListener('invalid', e => {
+        // 필수 항목을 누락한 경우
+        if (answer.validity.valueMissing) {
+            answer.setCustomValidity('해당 문항은 필수 항목입니다.');
+
+        // 데이터 유효성 검사를 통과한 경우
+        } else {
+            answer.setCustomValidity('');
+        }
+      })
+      
+    </script>
 
     <script>
         var label = "{{ label }}";

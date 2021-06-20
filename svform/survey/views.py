@@ -1,4 +1,5 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 from django.http import HttpResponse
 from .models import StepCountData, QuestionCode, ResultData
@@ -21,8 +22,8 @@ def introduce(request):
 # 시각화 및 텍스트 입력 페이지
 def problem(request, page_index):
     if request.method == "POST":
-        
-        answer = request.POST.get('answer')
+        if not request.session['id']:
+            request.session['id'] = request.session.session_key
 
         resultdata = ResultData()
         resultdata.pid = request.session['id']
@@ -30,11 +31,14 @@ def problem(request, page_index):
         
         resultdata.label = request.session['label']
         resultdata.data = request.session['data']
-        resultdata.answer = answer
+        resultdata.answer = request.POST.get('answer')
         resultdata.q_dsc = request.session['description']
         resultdata.save()
 
-        return HttpResponseRedirect(reverse('problem', args=(page_index,)))
+        if request.session['sequence'] == 30:
+            return redirect('result')
+        else:
+            return HttpResponseRedirect(reverse('problem', args=(page_index,)))
 
     else:
         next_page_index = page_index + 1
@@ -61,7 +65,10 @@ def problem(request, page_index):
             'legend_value':legend_value,
         }
 
-        return render(request, 'survey/problem.html', context)
+        try:
+            return render(request, 'survey/problem.html', context)
+        except StepCountData.DoesNotExist:
+            return render(request, 'survey/problem.html', context)
 
 # 종료 페이지
 def result(request):
