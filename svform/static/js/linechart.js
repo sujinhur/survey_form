@@ -25,7 +25,7 @@ data_min.push({'value' : d3.min(dataset1, d => d.value)});
 
 // 기본적인 마진값
 var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 700 - margin.left - margin.right,
+    width = 1000 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom
 
 // canvas 사이즈
@@ -95,7 +95,7 @@ var path = graph.append("path");
 path
 .attr("d", line(dataset)) 
 .attr("fill", "none")
-.attr("stroke", "blue")
+.attr("stroke", "#E0808F")
 .attr("stroke-width", 2);
 
 var line1 = d3
@@ -114,11 +114,11 @@ var path1 = graph.append("path");
 path1
 .attr("d", line1(dataset1)) 
 .attr("fill", "none")
-.attr("stroke", "red")
+.attr("stroke", "#5192C6")
 .attr("stroke-width", 2);
 
 // 범례 표시
-colors = ["blue", "red"];
+colors = ["#E0808F", "#5192C6"];
 var legend = svg.append("g")
     .attr("text-anchor", "end")
     .selectAll("g")

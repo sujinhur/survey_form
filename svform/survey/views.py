@@ -6,6 +6,7 @@ from .models import StepCountData, QuestionCode, ResultData
 import datetime
 from dateutil.relativedelta import relativedelta
 import random
+import csv
 
 # Create your views here.
 
@@ -73,6 +74,18 @@ def problem(request, page_index):
 # 종료 페이지
 def result(request):
     return render(request, 'survey/result.html')
+
+# resultdata export csv
+def exportcsv(request):
+    resultdata = ResultData.objects.all()
+    response = HttpResponse('text/csv')
+    response['Content-Disposition'] = 'attachment; filename=resultdata.csv'
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'PID', 'Sequence', 'Pass/NoPass', 'Label', 'QueryData', 'Answer', 'QuestionDescription'])
+    results = resultdata.values_list('id', 'pid', 'sequence', 'pnp', 'label', 'data', 'answer', 'q_dsc')
+    for rlt in results:
+        writer.writerow(rlt)
+    return response
 
 # 랜덤 db_list 생성하기
 def random_dblist():
@@ -142,7 +155,7 @@ def today_vis_data(date, stepcount):
         for i in range(len(date)):
             tmp_stepcount = tmp_stepcount + stepcount[i]
             if date[i].day == 1:
-                vis_date.append(str(date[i].month) + "월")
+                vis_date.append(str(date[i].year) + "년" + str(date[i].month) + "월")
                 if len(vis_date) >= 2:
                     vis_stepcount.append(tmp_stepcount//date[i-1].day)
                     tmp_stepcount = 0

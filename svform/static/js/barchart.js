@@ -10,7 +10,7 @@ console.log(dataset)
 
 // set the dimensions and margins of the graph
 var margin = {top: 30, right: 30, bottom: 70, left: 60},
-    width = 700 - margin.left - margin.right,
+    width = 1200 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
@@ -27,11 +27,24 @@ var x = d3.scaleBand()
   .range([ 0, width ])
   .domain(dataset.map(d => d.name))
   .padding(0.2);
+
 svg.append("g")
   .attr("transform", "translate(0," + height + ")")
   .call(d3.axisBottom(x))
   .selectAll("text")
-  .style("text-anchor", "center");
+  .style("font-size", "14px")
+  .attr('transform', function(d){
+    if(dataset.length >= 14 && dataset[0].name.length >= 5){
+      return "rotate(-15)"
+    }
+  })
+  .attr('y', 12)
+  .style("text-anchor", function(d){
+    if(dataset.length >= 14 && dataset[0].name.length >= 5){
+      return "end"
+    }
+    return "center"
+  });
 
 // Add Y axis
 var y = d3.scaleLinear()
@@ -49,13 +62,12 @@ svg.selectAll("rect")
     .attr("y", d => y(d.value))
     .attr("width", x.bandwidth())
     .attr("height",  d => y(0) - y(d.value))
-    .attr("fill", "#69b3a2")
+    .attr("fill", "#9BB7D4")
 
 
   svg.append("text")
   .attr("x", (width / 2))             
-  // .attr("y", 0 - (margin.top / 2))
-  .attr("y", height + margin.top + 10)
+  .attr("y", height + margin.top + 30)
   .attr("text-anchor", "middle")  
   .style("font-size", "16px") 
   .text(legend_value);
