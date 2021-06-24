@@ -1,0 +1,25 @@
+{% extends "survey/base.html" %}
+
+{% block content %}
+    
+
+    <div class="container">
+        <div class="row">
+            <h2 class="text-center">EXAMPLE</h2>
+        </div>
+        <div class="row d-grid col-3 mx-auto text-center">
+            <img src="/static/img/ex.png">
+        </div>
+        <div class="row d-grid col-6 mx-auto text-center">
+            <p class="lead"><strong>여러분은 문제에 보여지는 그래프를 보고 그래프를 보기 위해 어떻게 질문할지 입력란에 입력해주시면 됩니다.</strong> </p>
+            
+            <p class="lead"><strong>'NEXT' 버튼을 클릭해주시기 바랍니다.</strong></p>
+        </div>
+        <div class="d-grid col-4 mx-auto">
+            <button type="button" class="btn btn-dark btn-lg" onclick="location.href='attention'">START</button>
+        </div>
+        
+
+    </div> 
+
+{% endblock %}

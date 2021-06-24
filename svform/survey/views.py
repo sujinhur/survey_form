@@ -10,15 +10,22 @@ import csv
 
 # Create your views here.
 
-def index(request):
-    return HttpResponse('hello')
-
 # start page
-def introduce(request):
+def introduce(request):    
+    return render(request, 'survey/intro.html')
+
+# 예시 설명 페이지
+def example(request):
+    
+    return render(request, 'survey/example.html')
+
+# 주의사항 페이지
+def attention(request):
     db_list = random_dblist()
     request.session['q_list'] = db_list
     request.session['id'] = request.session.session_key
-    return render(request, 'survey/intro.html')
+    return render(request, 'survey/attention.html')
+
 
 # 시각화 및 텍스트 입력 페이지
 def problem(request, page_index):
