@@ -98,8 +98,8 @@ def exportcsv(request):
 def random_dblist():
     today_db_list = random.sample(range(1,14), 10)
     specify_db_list = random.sample(range(16,20), 4) + random.sample(range(16,20),4)
-    compare_db_list = random.sample(range(20,24),4) +random.sample(range(20,24),4) +random.sample(range(20,24),2)
-    db_index = today_db_list + specify_db_list + compare_db_list + [14, 15]
+    compare_db_list = random.sample(range(20,22),2) +random.sample(range(20,22),2) +random.sample(range(20,22),2)
+    db_index = today_db_list + specify_db_list + compare_db_list + [14, 15, 22, 23, 23, 23]
     random.shuffle(db_index)
     return db_index
 
@@ -145,7 +145,7 @@ def today_vis_data(date, stepcount):
     
     if len(date) < 32:
         for i in range(len(date)):
-            vis_date.append(date[i].day)    
+            vis_date.append(str(date[i].month) + '월 ' + str(date[i].day) + '일')    
         vis_stepcount = stepcount
 
     elif len(date) < 168:
