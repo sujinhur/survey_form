@@ -24,9 +24,9 @@ data_min.push({'value' : d3.min(dataset1, d => d.value)});
 
 
 // 기본적인 마진값
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
+var margin = {top: 10, right: 30, bottom: 60, left: 100},
     width = 1000 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom
+    height = 450 - margin.top - margin.bottom
 
 // canvas 사이즈
 var svg = d3
@@ -59,10 +59,12 @@ var y = d3
 const xAxisGroup = graph
   .append("g")
   .attr("class", "x-axis")
+  .style("font-size", "14px")
   .attr("transform", "translate(0," + height + ")");
 
 const yAxisGroup = graph
   .append("g")
+  .style("font-size", "12px")
   .attr("class", "y-axis");
 
 // create axes
@@ -96,7 +98,7 @@ path
 .attr("d", line(dataset)) 
 .attr("fill", "none")
 .attr("stroke", "#E0808F")
-.attr("stroke-width", 2);
+.attr("stroke-width", 3);
 
 var line1 = d3
   .line()
@@ -115,7 +117,7 @@ path1
 .attr("d", line1(dataset1)) 
 .attr("fill", "none")
 .attr("stroke", "#5192C6")
-.attr("stroke-width", 2);
+.attr("stroke-width", 3);
 
 // 범례 표시
 colors = ["#E0808F", "#5192C6"];
@@ -139,3 +141,12 @@ legend.append("text")
     .attr("dy", "0.01em")
     .attr("font-size", "12px")
     .text(function(d) { return d; });
+
+// Y axis label:
+svg.append("text")
+  .attr("text-anchor", "center")
+  .attr("transform", "rotate(-90)")
+  .attr("y", -margin.left + 140)
+  .attr("x", -margin.top-200)
+  .style("font-size", "16px") 
+  .text(y_value)

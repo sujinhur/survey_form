@@ -9,8 +9,8 @@ for(var i=0; i < date_1.length; i++) {
 console.log(dataset)
 
 // set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 70, left: 60},
-    width = 1200 - margin.left - margin.right,
+var margin = {top: 30, right: 30, bottom: 100, left: 70},
+    width = 1400 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
@@ -64,11 +64,20 @@ svg.selectAll("rect")
     .attr("height",  d => y(0) - y(d.value))
     .attr("fill", "#9BB7D4")
 
-
+// X axis label:
   svg.append("text")
   .attr("x", (width / 2))             
   .attr("y", height + margin.top + 30)
   .attr("text-anchor", "middle")  
   .style("font-size", "16px") 
   .text(legend_value);
+
+// Y axis label:
+svg.append("text")
+    .attr("text-anchor", "center")
+    .attr("transform", "rotate(-90)")
+    .attr("y", -margin.left+15)
+    .attr("x", -margin.top-140)
+    .style("font-size", "16px") 
+    .text(y_value)
 

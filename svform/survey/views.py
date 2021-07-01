@@ -24,7 +24,8 @@ def attention(request):
     db_list = random_dblist()
     request.session['q_list'] = db_list
     request.session['id'] = request.session.session_key
-    return render(request, 'survey/attention.html')
+    today = str(datetime.date.today().year) + "년 " + str(datetime.date.today().month) + "월 " + str(datetime.date.today().day) + "일"
+    return render(request, 'survey/attention.html', context={'today':today})
 
 
 # 시각화 및 텍스트 입력 페이지
@@ -55,7 +56,7 @@ def problem(request, page_index):
         q_list = {}
         q_list = request.session.get('q_list')
         
-        label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, data = maincode(page_index, q_list)
+        label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
 
         request.session['sequence'] = page_index
         request.session['label'] = label
@@ -71,6 +72,7 @@ def problem(request, page_index):
             'date_2': vis_date_2,
             'stepcount_2':vis_stepcount_2,
             'legend_value':legend_value,
+            'y_value':y_value,
         }
 
         try:
@@ -214,22 +216,35 @@ def create_legend_value(start_date, end_date, label):
     if label == "Today":
         if (end_date - start_date).days < 32:
             legend_value = "~ " + str(end_date.month) + "월"
+            y_value = "걸음 수"
+        elif (end_date - start_date).days < 168:
+            legend_value = "~ " + str(end_date.year) + "년 (주 평균)"
+            y_value = "평균 걸음 수"
         else:
-            legend_value = "~ " + str(end_date.year) + "년"
+            legend_value = "~ " + str(end_date.year) + "년 (월)"
+            y_value = "평균 걸음 수"
     elif label == "Specify":
         if (end_date - start_date).days < 32:
             legend_value = "~ " + str(end_date.year) + "년 " + str(end_date.month) + "월"
+            y_value = "걸음 수"
+        elif (end_date - start_date).days < 168:
+            legend_value = "~ " + str(end_date.year) + "년 (주 평균)"
+            y_value = "평균 걸음 수"
         else:
-            legend_value = "~ " + str(end_date.year) + "년"
+            legend_value = "~ " + str(end_date.year) + "년 (월)"
+            y_value = "평균 걸음 수"
     else:
         if (end_date[0] - start_date[0]).days < 8:
             legend_value = [str(start_date[0]) + ' ~ ' + str(end_date[0]), str(start_date[1]) + ' ~ ' + str(end_date[1])]
+            y_value = "걸음 수"
         elif (end_date[0] - start_date[0]).days > 35:
             legend_value = [str(start_date[0].year) + "년", str(start_date[1].year) + "년"]
+            y_value = "걸음 수"
         else: 
             legend_value = [str(start_date[0].year) + "년 " + str(start_date[0].month) + '월', str(start_date[1].year) + "년 " + str(start_date[1].month) + '월']
+            y_value = "평균 걸음 수"
 
-    return legend_value
+    return legend_value, y_value
 
 # 메인 코드
 def maincode(page_index, q_list):
@@ -240,7 +255,7 @@ def maincode(page_index, q_list):
     date, stepcount = date_stepcount_data(start_date, end_date)
 
     # 범례값 
-    legend_value = create_legend_value(start_date, end_date, label)
+    legend_value, y_value = create_legend_value(start_date, end_date, label)
 
     # 시각화할 데이터 전처리
     vis_date_1 = []
@@ -254,15 +269,75 @@ def maincode(page_index, q_list):
         vis_date_2, vis_stepcount_2 = compare_vis_data(date[1], stepcount[1])
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
         vis_date_2, vis_stepcount_2 = str_date(vis_date_2, vis_stepcount_2)
-        data.append("SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date[0]) + "'" + " and " + "'" + str(end_date[0]) + "'")
-        data.append("SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date[1]) + "'" + " and " + "'" + str(end_date[1]) + "'")
+        data.append(createqurey(description, start_date[0], end_date[0]))
+        data.append(createqurey(description, start_date[1], end_date[1]))
     else:
         vis_date_1, vis_stepcount_1 = today_vis_data(date, stepcount)
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
-        data.append("SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date) + "'" + " and " + "'" + str(end_date) + "'")
-
+        data.append(createqurey(description, start_date, end_date))
     print(data)
     print(vis_date_1, vis_stepcount_1)
     print(vis_date_2, vis_stepcount_2)
 
-    return label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, data
+    return label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data
+
+# 쿼리 생성 함수  
+def createqurey(description, start_date, end_date):
+    day = (end_date - start_date).days 
+    if description == '일일 걸음 수':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + str(day) + " days')  and date('now')"
+    elif description == '주별 평균 걸음 수': # 수정 필요
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + str(day) + " days', 'weekday 1')  and date('now')"
+    elif description == '월별 평균 걸음 수': # 수정 필요
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + str(day) + " days', 'start of month')  and date('now')"
+    elif description == '최근 1주':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-6 days')  and date('now')"
+    elif description == '최근 2주':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-13 days')  and date('now')"
+    elif description == '최근 3주':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-20 days')  and date('now')"
+    elif description == '최근 4주':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-27 days')  and date('now')"
+    elif description == '이번달':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', 'start of month')  and date('now')"
+    elif description == '최근 1달':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-1 month', '+1 days')  and date('now')"
+    elif description == '최근 2달':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-2 month', '+1 days')  and date('now')"
+    elif description == '최근 3달':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-3 month', '+1 days')  and date('now')"
+    elif description == '최근 6달':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-6 month', '+1 days')  and date('now')"
+    elif description == '최근 12달':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-12 month', '+1 days')  and date('now')"
+    elif description == '저번주':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-7 days', 'weekday 1')  and date('now', '-7 days','weekday 0')"
+    elif description == '저번달':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-1 month', 'start of month')  and date('now', 'start of month', '-1 days')"
+    elif description == 'n월':
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date) + "'" + " and date('" + str(start_date) + "', '+1 month', '-1 days')"
+    elif description == 'n월 ~ m월':
+        month = str((end_date.year - start_date.year) * 12 + end_date.month - start_date.month + 1)
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date) + "'" + " and date('" + str(start_date) + "', '+" + month + " month', '-1 days')"
+    elif description == 'n월 m째주': 
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN " + "'" + str(start_date) + "'" + " and date('" + str(start_date) + "', '+6 days')"
+    elif description == "n월 m일부터 n'월 m'일까지":
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and '" + str(end_date) + "'"
+    elif description == "주별 비교":
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+6 days')"
+    elif description == "월별 비교": 
+        if end_date == datetime.date.today():
+            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('now')"
+        else:
+            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+1 month', '-1 days')"
+    elif description == "연도별 비교": 
+        if end_date == datetime.date.today():
+            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('now')"
+        else:
+            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+12 month', '-1 days')"
+    else: 
+        if end_date == datetime.date.today():
+            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('now')"
+        else:
+            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+1 month', '-1 days')"
+
