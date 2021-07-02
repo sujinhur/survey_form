@@ -286,10 +286,11 @@ def createqurey(description, start_date, end_date):
     day = (end_date - start_date).days 
     if description == '일일 걸음 수':
         return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + str(day) + " days')  and date('now')"
-    elif description == '주별 평균 걸음 수': # 수정 필요
+    elif description == '주별 평균 걸음 수': 
         return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + str(day) + " days', 'weekday 1')  and date('now')"
-    elif description == '월별 평균 걸음 수': # 수정 필요
-        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + str(day) + " days', 'start of month')  and date('now')"
+    elif description == '월별 평균 걸음 수': 
+        month = str((end_date.year - start_date.year) * 12 + end_date.month - start_date.month)
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + month + " month', 'start of month')  and date('now')"
     elif description == '최근 1주':
         return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-6 days')  and date('now')"
     elif description == '최근 2주':
