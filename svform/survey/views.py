@@ -56,7 +56,11 @@ def problem(request, page_index):
         q_list = {}
         q_list = request.session.get('q_list')
         
-        label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
+        try:
+            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
+        except StepCountData.DoesNotExist:
+            print("데이터를 불러오지 못했습니다. 새로고침을 해주시기 바랍니다.")
+            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
 
         request.session['sequence'] = page_index
         request.session['label'] = label
@@ -75,10 +79,7 @@ def problem(request, page_index):
             'y_value':y_value,
         }
 
-        try:
-            return render(request, 'survey/problem.html', context)
-        except StepCountData.DoesNotExist:
-            return render(request, 'survey/problem.html', context)
+        return render(request, 'survey/problem.html', context)
 
 # 종료 페이지
 def result(request):
