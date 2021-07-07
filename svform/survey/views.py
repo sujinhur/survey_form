@@ -55,6 +55,7 @@ def problem(request, page_index):
         # 세션에 저장된 db에 검색할 순서 
         q_list = {}
         q_list = request.session.get('q_list')
+        print(q_list)
         
         try:
             label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
@@ -101,8 +102,8 @@ def exportcsv(request):
 def random_dblist():
     today_db_list = random.sample(range(1,14), 10)
     specify_db_list = random.sample(range(16,20), 4) + random.sample(range(16,20),4)
-    compare_db_list = random.sample(range(20,22),2) +random.sample(range(20,22),2) +random.sample(range(20,22),2)
-    db_index = today_db_list + specify_db_list + compare_db_list + [14, 15, 22, 23, 23, 23]
+    compare_db_list = random.sample(range(20,22),2) +random.sample(range(20,22),2) 
+    db_index = today_db_list + specify_db_list + compare_db_list + [14, 15, 20, 22, 23, 23, 24, 25]
     random.shuffle(db_index)
     return db_index
 
@@ -176,15 +177,17 @@ def today_vis_data(date, stepcount):
 
 
 # 비교 - 시각화 할 데이터만 정리
-def compare_vis_data(date, stepcount):
+def compare_vis_data(date, stepcount, description):
+    weekday = ['월', '화', '수', '목', '금', '토', '일']
     vis_date = []
     vis_stepcount = []
     
-    if len(date) < 8:
-        vis_date = ['월', '화', '수', '목', '금', '토', '일']
+    if description == "주별 비교" or description == "이번주 저번주 비교":
+        for i in range(len(date)):
+            vis_date.append(weekday[i])
         vis_stepcount = stepcount
 
-    elif len(date) < 32:
+    elif description == "월별 비교" or description == "연도별 월별 비교" or description == "이번달 저번달 비교":
         for i in range(len(date)):
             vis_date.append(date[i].day)    
         vis_stepcount = stepcount
@@ -266,8 +269,8 @@ def maincode(page_index, q_list):
     data = []
 
     if label == 'Compare':
-        vis_date_1, vis_stepcount_1 = compare_vis_data(date[0], stepcount[0])
-        vis_date_2, vis_stepcount_2 = compare_vis_data(date[1], stepcount[1])
+        vis_date_1, vis_stepcount_1 = compare_vis_data(date[0], stepcount[0], description)
+        vis_date_2, vis_stepcount_2 = compare_vis_data(date[1], stepcount[1], description)
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
         vis_date_2, vis_stepcount_2 = str_date(vis_date_2, vis_stepcount_2)
         data.append(createqurey(description, start_date[0], end_date[0]))
