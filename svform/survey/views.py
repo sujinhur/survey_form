@@ -59,7 +59,6 @@ def problem(request, page_index):
         try:
             label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
         except StepCountData.DoesNotExist:
-            print("데이터를 불러오지 못했습니다. 새로고침을 해주시기 바랍니다.")
             label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
 
         request.session['sequence'] = page_index
@@ -278,9 +277,6 @@ def maincode(page_index, q_list):
         vis_date_1, vis_stepcount_1 = today_vis_data(date, stepcount)
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
         data.append(createqurey(description, start_date, end_date))
-    print(data)
-    print(vis_date_1, vis_stepcount_1)
-    print(vis_date_2, vis_stepcount_2)
 
     return label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data
 
