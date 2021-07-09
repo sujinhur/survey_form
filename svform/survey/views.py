@@ -55,7 +55,6 @@ def problem(request, page_index):
         # 세션에 저장된 db에 검색할 순서 
         q_list = {}
         q_list = request.session.get('q_list')
-        print(q_list)
         
         try:
             label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
