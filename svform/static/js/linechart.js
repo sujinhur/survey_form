@@ -79,6 +79,24 @@ const yAxis = d3
 xAxisGroup.call(xAxis);
 yAxisGroup.call(yAxis);
 
+// gridlines in y axis function
+function make_y_gridlines() {		
+  return d3.axisLeft(y)
+      .ticks()
+}
+
+// add the Y gridlines
+graph.append("g")			
+.attr("class", "grid")
+.attr('fill','none')
+.attr('stroke', '#DCDCDC')
+.attr('stroke-width',0.1)
+.attr('shape-rendering','crispEdges')
+.call(make_y_gridlines()
+    .tickSize(-width)
+    .tickFormat("")
+)
+
 
 // d3 Line path generator *****
 var line = d3
@@ -129,14 +147,14 @@ var legend = svg.append("g")
     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
 legend.append("rect")
-    .attr("x", width)
+    .attr("x", width - 25)
     .attr("y", 10)
     .attr("width", 20)
     .attr("height", 13)
     .attr("fill", function(d, i) { return colors[i]; });
 
 legend.append("text")
-    .attr("x", width -5)
+    .attr("x", width - 30)
     .attr("y", 20)
     .attr("dy", "0.01em")
     .attr("font-size", "12px")

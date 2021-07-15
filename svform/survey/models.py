@@ -16,7 +16,7 @@ class ResultData(models.Model):
         ('Compare', 'Compare'),
     ]
     label = models.CharField(max_length=8, choices=Label_Choices)
-    data = models.CharField(max_length=200)
+    data = models.TextField()
     answer = models.TextField()
     q_dsc = models.CharField(max_length=50, default="db_index_dsc")
 

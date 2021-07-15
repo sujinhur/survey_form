@@ -11,7 +11,7 @@ console.log(dataset)
 // set the dimensions and margins of the graph
 var margin = {top: 30, right: 30, bottom: 100, left: 70},
     width = 1400 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    height = 450 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#chart")
@@ -48,10 +48,30 @@ svg.append("g")
 
 // Add Y axis
 var y = d3.scaleLinear()
-  .domain([0, d3.max(dataset, d => d.value)])
+  .domain([0, d3.max(dataset, d => d.value)]).nice()
   .range([ height, 0]);
+  
 svg.append("g")
+  .style("font-size", "12px")
   .call(d3.axisLeft(y));
+
+  // gridlines in y axis function
+function make_y_gridlines() {		
+  return d3.axisLeft(y)
+      .ticks(5)
+}
+
+// add the Y gridlines
+svg.append("g")			
+.attr("class", "grid")
+.attr('fill','none')
+.attr('stroke', '#DCDCDC')
+.attr('stroke-width',0.1)
+.attr('shape-rendering','crispEdges')
+.call(make_y_gridlines()
+    .tickSize(-width)
+    .tickFormat("")
+)
 
 // Bars
 svg.selectAll("rect")
