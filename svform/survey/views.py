@@ -57,9 +57,9 @@ def problem(request, page_index):
         q_list = request.session.get('q_list')
         
         try:
-            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
+            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period = maincode(page_index, q_list)
         except StepCountData.DoesNotExist:
-            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data = maincode(page_index, q_list)
+            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period = maincode(page_index, q_list)
 
         request.session['sequence'] = page_index
         request.session['label'] = label
@@ -68,6 +68,8 @@ def problem(request, page_index):
 
 
         context = {
+            'page_index':page_index,
+            'date_period': date_period,
             'next_page_index':next_page_index,
             'label': label,
             'date_1': vis_date_1,
@@ -248,6 +250,14 @@ def create_legend_value(start_date, end_date, label):
 
     return legend_value, y_value
 
+# 날짜 기간 가져오기
+def date_section(start_date, end_date):
+    if type(start_date) == list:
+        date_period = str(start_date[0].year) + "년 " + str(start_date[0].month) + "월 " + str(start_date[0].day) + "일 ~ " + str(end_date[0].year) + "년 " + str(end_date[0].month) + "월 " + str(end_date[0].day) + "일, " + str(start_date[1].year) + "년 " + str(start_date[1].month) + "월 " + str(start_date[1].day) + "일 ~ " + str(end_date[1].year) + "년 " + str(end_date[1].month) + "월 " + str(end_date[1].day) + "일"
+    else:
+        date_period = str(start_date.year) + "년 " + str(start_date.month) + "월 " + str(start_date.day) + "일 ~ " + str(end_date.year) + "년 " + str(end_date.month) + "월 " + str(end_date.day) + "일"
+    return date_period
+
 # 메인 코드
 def maincode(page_index, q_list):
     # 날짜, 라벨 가져오기
@@ -258,6 +268,9 @@ def maincode(page_index, q_list):
 
     # 범례값 
     legend_value, y_value = create_legend_value(start_date, end_date, label)
+
+    # 날짜 기간
+    date_period = date_section(start_date, end_date)
 
     # 시각화할 데이터 전처리
     vis_date_1 = []
@@ -278,7 +291,7 @@ def maincode(page_index, q_list):
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
         data.append(createqurey(description, start_date, end_date))
 
-    return label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data
+    return label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period
 
 # 쿼리 생성 함수  
 def createqurey(description, start_date, end_date):
