@@ -102,7 +102,11 @@ graph.append("g")
 var line = d3
   .line()
   .x(function(d) {
-    return x(d.name);
+    if(dataset.length < 8) {
+      return x(d.name) + 30;
+    }
+    else{
+      return x(d.name) ;}
   })
   .y(function(d) {
     return y(d.value);
@@ -120,8 +124,12 @@ path
 
 var line1 = d3
   .line()
-  .x(function(d) {
-    return x(d.name);
+  .x(function(d) { 
+  if(dataset.length < 8) {
+    return x(d.name) + 30;
+  }
+  else{
+    return x(d.name) ;}
   })
   .y(function(d) {
     return y(d.value);
