@@ -85,12 +85,12 @@ svg.selectAll("rect")
     .attr("fill", "#9BB7D4")
 
 // X axis label:
-  svg.append("text")
-  .attr("x", (width / 2))             
-  .attr("y", height + margin.top + 50)
-  .attr("text-anchor", "middle")  
-  .style("font-size", "16px") 
-  .text(legend_value);
+  // svg.append("text")
+  // .attr("x", (width / 2))             
+  // .attr("y", height + margin.top + 50)
+  // .attr("text-anchor", "middle")  
+  // .style("font-size", "16px") 
+  // .text(legend_value);
 
 // Y axis label:
 svg.append("text")

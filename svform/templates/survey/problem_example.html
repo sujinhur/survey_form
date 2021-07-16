@@ -1,0 +1,31 @@
+{% extends "survey/base.html" %}
+
+{% block content %}
+    
+
+    <div class="container">
+        <div class="row">
+            <h2 class="text-center">PROBLEM EXAMPLE</h2>
+        </div>
+        <div class="row d-grid col-6 mx-auto text-center">
+            <p class="lead"><strong>따라서 <u>본 설문에서는 특정기간에 대한 걸음 수 시각화가 주어질 것입니다. 설문의 문제 유형은 모두 아래의 이미지와 같으며,</u> 
+                여러분은 문제에 보여지는 시각화를 보시고 해당 기간의 시각화를 보기 위해 어떻게 질문할지 입력란에 입력해주시면 됩니다.
+            </strong></p>
+            <p class="lead"><strong>아래의 이미지로 예를 들어보겠습니다. 오늘이 7월 16일이고, 시각화가 4월 17일부터 오늘까지의 걸음수를 나타내고 있다고 가정한다면, 
+                <u>입력란에는 ‘4월 17일부터 오늘까지 걸음 수 보여줘’, ‘4월 17일부터 7월 16일까지 얼마나 걸었어?’, ‘최근 3달동안 얼마나 걸었어?’와 같은 질문을 입력해주시면 됩니다.</u>
+            </strong></p>
+        </div>
+        <div class="row d-grid col-3 mx-auto text-center">
+            <img src="/static/img/problem_example.png">
+        </div>
+        <div class="row d-grid col-6 mx-auto text-center">
+            <p class="lead"><strong>'NEXT' 버튼을 클릭해주시기 바랍니다.</strong></p>
+        </div>
+        <div class="d-grid col-4 mx-auto">
+            <button style="margin-bottom: 10%;" type="button" class="btn btn-dark btn-lg" onclick="location.href='attention'">NEXT</button>
+        </div>
+        
+
+    </div> 
+
+{% endblock %}

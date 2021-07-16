@@ -10,6 +10,7 @@ from . import views
 urlpatterns = [
     path('', views.introduce, name='introduce'),
     path('example', views.example, name='example'),
+    path('problem_example', views.problem_example, name='problem_example'),
     path('attention', views.attention, name='attention'),
     path('problem/<int:page_index>', views.problem, name='problem'),
     url(r'^problem/(?P<page_index>\w{0,50})', views.problem, name='problem'),

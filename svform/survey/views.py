@@ -19,6 +19,10 @@ def example(request):
     
     return render(request, 'survey/example.html')
 
+# 문제 예시 페이지
+def problem_example(request):
+    return render(request, 'survey/problem_example.html')
+
 # 주의사항 페이지
 def attention(request):
     db_list = random_dblist()
