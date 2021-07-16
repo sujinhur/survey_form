@@ -153,13 +153,18 @@ def today_vis_data(date, stepcount):
         vis_stepcount = stepcount
 
     elif len(date) < 168:
+        remainder = len(date) % 7
+        cut = len(date) // 7
         tmp_stepcount = 0
         for i in range(len(date)):           
             tmp_stepcount = tmp_stepcount + stepcount[i]
             if (i+1) % 7 == 0:
-                vis_date.append(str(date[i-6].month) + "월 " + str(date[i-6].day) + "일")
+                vis_date.append(str(date[i-6].month) + "월 " + str(date[i-6].day) + "일 ~ " + str(date[i].month) + "월 " + str(date[i].day) + "일")
                 vis_stepcount.append(tmp_stepcount//7)
                 tmp_stepcount = 0
+            if remainder != 0 and i == cut * 7 + remainder -1:
+                vis_date.append(str(date[i-remainder + 1].month) + "월 " + str(date[i-remainder + 1].day) + "일 ~ " + str(date[i].month) + "월 " + str(date[i].day) + "일")
+                vis_stepcount.append(tmp_stepcount//remainder)
 
     else:
         tmp_stepcount = 0
@@ -223,20 +228,20 @@ def create_legend_value(start_date, end_date, label):
             y_value = "걸음 수"
         elif (end_date - start_date).days < 168:
             legend_value = "~ " + str(end_date.year) + "년 (주 평균)"
-            y_value = "평균 걸음 수"
+            y_value = "주별 평균 걸음 수"
         else:
             legend_value = "~ " + str(end_date.year) + "년 (월)"
-            y_value = "평균 걸음 수"
+            y_value = "월 평균 걸음 수"
     elif label == "Specify":
         if (end_date - start_date).days < 32:
             legend_value = "~ " + str(end_date.year) + "년 " + str(end_date.month) + "월"
             y_value = "걸음 수"
         elif (end_date - start_date).days < 168:
             legend_value = "~ " + str(end_date.year) + "년 (주 평균)"
-            y_value = "평균 걸음 수"
+            y_value = "주별 평균 걸음 수"
         else:
             legend_value = "~ " + str(end_date.year) + "년 (월)"
-            y_value = "평균 걸음 수"
+            y_value = "월 평균 걸음 수"
     else:
         if (end_date[0] - start_date[0]).days < 8:
             legend_value = [str(start_date[0]) + ' ~ ' + str(end_date[0]), str(start_date[1]) + ' ~ ' + str(end_date[1])]
@@ -246,7 +251,7 @@ def create_legend_value(start_date, end_date, label):
             y_value = "걸음 수"
         else: 
             legend_value = [str(start_date[0].year) + "년 " + str(start_date[0].month) + '월', str(start_date[1].year) + "년 " + str(start_date[1].month) + '월']
-            y_value = "평균 걸음 수"
+            y_value = "월 평균 걸음 수"
 
     return legend_value, y_value
 

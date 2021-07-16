@@ -32,15 +32,15 @@ svg.append("g")
   .attr("transform", "translate(0," + height + ")")
   .call(d3.axisBottom(x))
   .selectAll("text")
-  .style("font-size", "14px")
+  .style("font-size", "13px")
   .attr('transform', function(d){
-    if(dataset.length >= 14 && dataset[0].name.length >= 5){
+    if(dataset.length >= 14 && dataset[0].name.length >= 5 || dataset[0].name.length >= 13){
       return "rotate(-15)"
     }
   })
   .attr('y', 12)
   .style("text-anchor", function(d){
-    if(dataset.length >= 14 && dataset[0].name.length >= 5){
+    if(dataset.length >= 14 && dataset[0].name.length >= 5 || dataset[0].name.length >= 13){
       return "end"
     }
     return "center"
@@ -87,7 +87,7 @@ svg.selectAll("rect")
 // X axis label:
   svg.append("text")
   .attr("x", (width / 2))             
-  .attr("y", height + margin.top + 30)
+  .attr("y", height + margin.top + 50)
   .attr("text-anchor", "middle")  
   .style("font-size", "16px") 
   .text(legend_value);
@@ -97,7 +97,7 @@ svg.append("text")
     .attr("text-anchor", "center")
     .attr("transform", "rotate(-90)")
     .attr("y", -margin.left+15)
-    .attr("x", -margin.top-140)
+    .attr("x", -margin.top-150)
     .style("font-size", "16px") 
     .text(y_value)
 
