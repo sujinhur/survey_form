@@ -9,7 +9,7 @@ for(var i=0; i < date_1.length; i++) {
 console.log(dataset)
 
 // set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 100, left: 70},
+var margin = {top: 30, right: 30, bottom: 100, left: 80},
     width = 1400 - margin.left - margin.right,
     height = 450 - margin.top - margin.bottom;
 

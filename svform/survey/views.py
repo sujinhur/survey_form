@@ -48,7 +48,7 @@ def problem(request, page_index):
         resultdata.q_dsc = request.session['description']
         resultdata.save()
 
-        if request.session['sequence'] == 30:
+        if request.session['sequence'] == 15:
             return redirect('result')
         else:
             return HttpResponseRedirect(reverse('problem', args=(page_index,)))
@@ -104,10 +104,10 @@ def exportcsv(request):
 
 # 랜덤 db_list 생성하기
 def random_dblist():
-    today_db_list = random.sample(range(1,14), 10)
-    specify_db_list = random.sample(range(16,20), 4) + random.sample(range(16,20),4)
-    compare_db_list = random.sample(range(20,22),2) +random.sample(range(20,22),2) 
-    db_index = today_db_list + specify_db_list + compare_db_list + [14, 15, 20, 22, 23, 23, 24, 25]
+    today_db_list = random.sample(range(1,14), 5)
+    specify_db_list = random.sample(range(14,20), 5)
+    compare_db_list = random.sample(range(20,26),5) 
+    db_index = today_db_list + specify_db_list + compare_db_list 
     random.shuffle(db_index)
     return db_index
 
