@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ResultData, StepCountData, Today, Specify, Compare, QuestionCode
+from .models import ResultData, StepCountData, Today, Specify, Compare, QuestionCode, PhoneNumber
 
 
 # Register your models here.
@@ -16,3 +16,5 @@ admin.site.register(Compare)
 admin.site.register(StepCountData)
 
 admin.site.register(QuestionCode)
+
+admin.site.register(PhoneNumber)

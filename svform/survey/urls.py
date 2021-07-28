@@ -14,6 +14,7 @@ urlpatterns = [
     path('attention', views.attention, name='attention'),
     path('problem/<int:page_index>', views.problem, name='problem'),
     url(r'^problem/(?P<page_index>\w{0,50})', views.problem, name='problem'),
+    path('event', views.event, name='event'), 
     path('result', views.result, name='result'),
 ]
 

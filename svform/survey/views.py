@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 from django.http import HttpResponse
-from .models import StepCountData, QuestionCode, ResultData
+from .models import StepCountData, QuestionCode, ResultData, PhoneNumber
 import datetime
 from dateutil.relativedelta import relativedelta
 import random
@@ -49,7 +49,7 @@ def problem(request, page_index):
         resultdata.save()
 
         if request.session['sequence'] == 15:
-            return redirect('result')
+            return redirect('event')
         else:
             return HttpResponseRedirect(reverse('problem', args=(page_index,)))
 
@@ -85,6 +85,17 @@ def problem(request, page_index):
         }
 
         return render(request, 'survey/problem.html', context)
+
+# enent 페이지
+def event(request):
+    if request.method == "POST":
+        pid = ResultData.objects.latest('id')
+        phoneNumber = PhoneNumber()
+        phoneNumber.resultdata = pid
+        phoneNumber.ph_num = request.POST.get('ph_num')
+        phoneNumber.save()
+        return redirect('result')
+    return render(request, 'survey/insert_ph_num.html')
 
 # 종료 페이지
 def result(request):

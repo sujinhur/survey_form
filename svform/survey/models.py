@@ -61,3 +61,7 @@ class QuestionCode(models.Model):
     label = models.CharField(max_length=10)
     code = models.TextField()
     description = models.CharField(max_length=30)
+
+class PhoneNumber(models.Model):
+    resultdata = models.ForeignKey('ResultData', on_delete= models.CASCADE, db_column='resultdata_id')
+    ph_num = models.CharField(max_length=15)
