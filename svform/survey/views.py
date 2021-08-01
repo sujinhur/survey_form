@@ -113,6 +113,18 @@ def exportcsv(request):
         writer.writerow(rlt)
     return response
 
+# phonenumber export csv
+def exportcsv_phnum(request):
+    phoneNumber = PhoneNumber.objects.all()
+    response = HttpResponse('text/csv')
+    response['Content-Disposition'] = 'attachment; filename=phoneNumber.csv'
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'resultdata', 'ph_num'])
+    results = phoneNumber.values_list('id', 'resultdata', 'ph_num')
+    for rlt in results:
+        writer.writerow(rlt)
+    return response
+
 # 랜덤 db_list 생성하기
 def random_dblist():
     today_db_list = random.sample(range(1,14), 5)
@@ -374,3 +386,81 @@ def createqurey(description, start_date, end_date):
         else:
             return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+1 month', '-1 days')"
 
+
+# confirm page
+def confirm(request):
+    if request.method == "POST":
+        resultpnp = ResultData.objects.get(id=request.session['idx'])
+        resultpnp.pnp = request.POST.get('inlineRadioOptions')
+        resultpnp.checked = 'checked'
+        resultpnp.save()
+        return redirect('confirm')
+        # return HttpResponseRedirect(reverse('confirm'))
+
+    else:
+        idx = ResultData.objects.filter(checked__isnull = True)[0].id
+
+        request.session['idx'] = idx
+        
+        cf_data = ResultData.objects.get(id=idx)
+        cf_query = cf_data.data
+        cf_query = cf_query[2:-2]
+        cf_answer = cf_data.answer
+        cf_label = cf_data.label
+        cf_dsc = cf_data.q_dsc
+
+        vis_date_1, vis_stepcount_1, vis_date_2, vis_stepcount_2, legend_value, y_value = confirm_vis_data(cf_label, cf_query, cf_dsc)
+
+        
+
+        context = {
+            'cf_answer' : cf_answer,
+            'cf_label' : cf_label,
+            'cf_dsc' : cf_dsc,
+            'cf_query' : cf_query,
+            'legend_value' : legend_value,
+            'y_value' : y_value,
+            'date_1' : vis_date_1, 
+            'stepcount_1' : vis_stepcount_1,
+            'date_2' : vis_date_2, 
+            'stepcount_2' : vis_stepcount_2,
+        }
+        return render(request, 'confirm/confirm.html', context)
+
+# 검수 페이지 시각화 데이터 처리
+def confirm_vis_data(cf_label, cf_query, cf_dsc):
+    date_1 = []
+    stepcount_1 = []
+    date_2 = []
+    stepcount_2 = []
+    if cf_label == "Compare":
+        cf_query = cf_query.split('", "')
+        for p in StepCountData.objects.raw(cf_query[0]):
+            date_1.append(p.date)
+            stepcount_1.append(p.stepcount)
+        for p in StepCountData.objects.raw(cf_query[1]):
+            date_2.append(p.date)
+            stepcount_2.append(p.stepcount)
+        start_date = []
+        end_date = []
+        start_date.append(date_1[0])
+        start_date.append(date_2[0])
+        end_date.append(date_1[-1])
+        end_date.append(date_2[-1])
+
+        date_1, stepcount_1 = compare_vis_data(date_1, stepcount_1, cf_dsc)
+        date_2, stepcount_2 = compare_vis_data(date_2, stepcount_2, cf_dsc)
+
+        date_1, stepcount_1 = str_date(date_1, stepcount_1)
+        date_2, stepcount_2 = str_date(date_2, stepcount_2)
+    else:
+        for p in StepCountData.objects.raw(cf_query):
+            date_1.append(p.date)
+            stepcount_1.append(p.stepcount)
+        start_date, end_date = date_1[0], date_1[-1]
+        date_1, stepcount_1 = today_vis_data(date_1, stepcount_1)
+
+    # 범례값 
+    legend_value, y_value = create_legend_value(start_date, end_date, cf_label)
+
+    return date_1, stepcount_1, date_2, stepcount_2, legend_value, y_value

@@ -18,12 +18,13 @@
     <div class="row d-grid col-6 mx-auto text-center">
             
         <p  class="lead"><strong>설문에 응해주셔서 감사합니다. 추첨을 통해 기프티콘을 증정하오니 아래 문항에 휴대폰 번호를 기재한 후 'SUBMIT' 버튼을 클릭해주시기 바랍니다. </strong></p>
+        <p  class="lead"><strong>만약 원하지 않으시면 바로 'SUBMIT'버튼을 클릭해주시기 바랍니다.</strong></p>
     </div>
 
     <form method="post">
         {% csrf_token %}
         <div class="row d-grid col-6 mx-auto text-center">
-            <input type="text" class="form-control-lg" placeholder="'-'를 제외하고 숫자만 입력해주세요." name="ph_num" id="ph_num" required>   
+            <input type="text" class="form-control-lg" placeholder="'-'를 제외하고 숫자만 입력해주세요." name="ph_num">   
         </div>
         
         <div class="d-grid col-4 mx-auto">
@@ -33,24 +34,5 @@
     </form>
 
 </div>
-
-<script>
-    const answer = document.getElementById('ph_num');
-
-    answer.addEventListener('invalid', e => {
-    // 필수 항목을 누락한 경우
-    if (answer.validity.valueMissing) {
-        answer.setCustomValidity('해당 문항은 필수 항목입니다.');
-
-    // 데이터 유효성 검사를 통과한 경우
-    } else {
-        answer.setCustomValidity('');
-    }
-  })
-    
-  
-</script>
-
-
 
 {% endblock %}

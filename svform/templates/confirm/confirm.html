@@ -1,0 +1,89 @@
+{% extends "../survey/base.html" %}
+
+{% block content %}
+
+<div class = "container">
+    <div class="row">
+        <h2 class="text-center">DATA CONFIRM</h2>
+    </div>
+
+    <div class="row">
+        <h3 style="line-height: 150%;">Visualization</h3>
+    </div>
+
+    <div class="d-grid justify-content-md-center">
+        <div class="col-md-8" id="chart"></div>
+        <p class="text-center">{{ cf_query }}</p>
+    </div>
+
+    <div class="row">
+        <h3 style="line-height: 150%;">Label/Description</h3>
+        {{ cf_label }} / {{ cf_dsc }}
+    </div>
+
+    <div class="row">
+        <h3 style="line-height: 150%;">Answer</h3>
+        {{ cf_answer }}
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="row justify-content-md-center">
+            <div class="col-md-auto">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="True" required>
+                    <label class="form-check-label" for="inlineRadio1">Able</label>
+                </div>  
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="False">
+                    <label class="form-check-label" for="inlineRadio2">Unable</label>
+                </div>
+            </div>  
+        </div>
+        <div class="d-grid col-4 mx-auto">
+            <input style="margin-bottom: 10%; margin-top: 10%;" type="submit" class="btn btn-lg btn-dark" value="NEXT">
+        </div>
+
+    </form>
+
+
+
+</div>
+
+
+<script>
+    var label = "{{ cf_label }}";
+    var date_1 = "{{ date_1 }}".replace(/&#x27;/g, "\"");
+    console.log(date_1);
+    var date_2 = "{{ date_2 }}".replace(/&#x27;/g, "\"");
+    console.log(date_2);
+    var stepcount_1 = "{{ stepcount_1 }}".replace(/&#x27;/g, "\"");
+    var stepcount_2 = "{{ stepcount_2 }}".replace(/&#x27;/g, "\"");
+    var legend_value = "{{ legend_value }}".replace(/&#x27;/g, "\"");
+    var y_value = "{{ y_value }}".replace(/&#x27;/g, "\"");
+
+    date_1 = JSON.parse(date_1);
+    date_2 = JSON.parse(date_2);
+    stepcount_1 = JSON.parse(stepcount_1);
+    stepcount_2 = JSON.parse(stepcount_2);
+            
+    console.log(date_1);
+    console.log(typeof(date_1));
+    console.log(stepcount_1);
+    console.log(stepcount_2);
+    console.log(label);
+    console.log(legend_value);
+    console.log(y_value);
+    
+
+
+    if(label == 'Compare') {
+        $.getScript("../../static/js/compare_line.js");
+    }
+    else {
+        $.getScript("../../static/js/today_specify_bar.js");
+    }
+
+</script>
+
+{% endblock %}
