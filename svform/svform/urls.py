@@ -22,4 +22,9 @@ urlpatterns = [
     path('survey/', include('survey.urls')),
     path('admin/', admin.site.urls),
     path('exportcsv', views.exportcsv),
+    path('exportcsv_phnum', views.exportcsv_phnum),
+    path('confirm/', views.confirm, name='confirm'),
+    path('exportcsv_today', views.today_exportcsv),
+    path('exportcsv_specify', views.specify_exportcsv),
+    path('exportcsv_compare', views.compare_exportcsv),
 ]

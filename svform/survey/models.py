@@ -19,6 +19,12 @@ class ResultData(models.Model):
     data = models.TextField()
     answer = models.TextField()
     q_dsc = models.CharField(max_length=50, default="db_index_dsc")
+    survey_date = models.DateField(null=True)
+    start_date_1 = models.DateField(null=True)
+    start_date_2 = models.DateField(null=True)
+    end_date_1 = models.DateField(null=True)
+    end_date_2 = models.DateField(null=True)
+    checked = models.CharField(max_length=10, null=True)
 
 
 # Today dataset(resultdata에서 label이 Today이고 pnp가 True인 data)
@@ -26,7 +32,7 @@ class ResultData(models.Model):
 class Today(models.Model):
     resultdata = models.ForeignKey('ResultData', on_delete= models.CASCADE, db_column='resultdata_id')
     answer = models.TextField()
-    date1 = models.CharField(max_length=15)
+    query = models.TextField(null=True)
 
 
 # Today dataset(resultdata에서 label이 Specify이고 pnp가 True인 data)
@@ -34,8 +40,7 @@ class Today(models.Model):
 class Specify(models.Model):
     resultdata = models.ForeignKey('ResultData', on_delete= models.CASCADE, db_column='resultdata_id')
     answer = models.TextField()
-    date1 = models.CharField(max_length=15)
-    date2 = models.CharField(max_length=15)
+    query = models.TextField(null=True)
 
 
 # Today dataset(resultdata에서 label이 Compare이고 pnp가 True인 data)
@@ -43,11 +48,8 @@ class Specify(models.Model):
 class Compare(models.Model):
     resultdata = models.ForeignKey('ResultData', on_delete= models.CASCADE, db_column='resultdata_id')
     answer = models.TextField()
-    date1 = models.CharField(max_length=15)
-    date2 = models.CharField(max_length=15)
-    date3 = models.CharField(max_length=15)
-    date4 = models.CharField(max_length=15)
-
+    query = models.TextField(null=True)
+    
 # 걸음 수 데이터 
 class StepCountData(models.Model):
     date = models.DateField()

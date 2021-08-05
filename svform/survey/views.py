@@ -1,8 +1,9 @@
 from django.shortcuts import redirect, render
 from django.http.response import HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from django.http import HttpResponse
-from .models import StepCountData, QuestionCode, ResultData, PhoneNumber
+from .models import StepCountData, QuestionCode, ResultData, PhoneNumber, Today, Specify, Compare
 import datetime
 from dateutil.relativedelta import relativedelta
 import random
@@ -46,6 +47,17 @@ def problem(request, page_index):
         resultdata.data = request.session['data']
         resultdata.answer = request.POST.get('answer')
         resultdata.q_dsc = request.session['description']
+        resultdata.survey_date = request.session['survey_date']
+    
+        if request.session['label'] == 'Compare':
+            resultdata.start_date_1 = request.session['start_date_1']
+            resultdata.start_date_2 = request.session['start_date_2']
+            resultdata.end_date_1 = request.session['end_date_1']
+            resultdata.end_date_2 = request.session['end_date_2']
+        else:
+            resultdata.start_date_1 = request.session['start_date_1']
+            resultdata.end_date_1 = request.session['end_date_1']
+
         resultdata.save()
 
         if request.session['sequence'] == 15:
@@ -61,14 +73,26 @@ def problem(request, page_index):
         q_list = request.session.get('q_list')
         
         try:
-            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period = maincode(page_index, q_list)
+            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period, start_date, end_date = maincode(page_index, q_list)
         except StepCountData.DoesNotExist:
-            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period = maincode(page_index, q_list)
+            label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period, start_date, end_date = maincode(page_index, q_list)
 
         request.session['sequence'] = page_index
         request.session['label'] = label
         request.session['data'] = data
         request.session['description'] = description
+
+        survey_date = datetime.date.today()
+        request.session['survey_date'] = str(survey_date)
+        if type(start_date) == list:
+            request.session['start_date_1'] = str(start_date[0])
+            request.session['start_date_2'] = str(start_date[1])
+            request.session['end_date_1'] = str(end_date[0])
+            request.session['end_date_2'] = str(end_date[1])
+            
+        else:
+            request.session['start_date_1'] = str(start_date)
+            request.session['end_date_1'] = str(end_date)
 
 
         context = {
@@ -323,7 +347,7 @@ def maincode(page_index, q_list):
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
         data.append(createqurey(description, start_date, end_date))
 
-    return label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period
+    return label, description, vis_date_1, vis_stepcount_1,vis_date_2, vis_stepcount_2, legend_value, y_value, data, date_period, start_date, end_date
 
 # 쿼리 생성 함수  
 def createqurey(description, start_date, end_date):
@@ -388,36 +412,87 @@ def createqurey(description, start_date, end_date):
 
 
 # confirm page
+@csrf_exempt
 def confirm(request):
     if request.method == "POST":
+
+        pnp = request.POST.get('inlineRadioOptions')
+        
         resultpnp = ResultData.objects.get(id=request.session['idx'])
-        resultpnp.pnp = request.POST.get('inlineRadioOptions')
+        resultpnp.pnp = pnp
         resultpnp.checked = 'checked'
         resultpnp.save()
+
+        label = request.session['cf_label']
+        answer = request.session['cf_answer']
+        query = request.session['cf_query'] 
+
+        if pnp == "True":
+            if label == "Today":
+                todaydata = Today()
+                todaydata.resultdata = ResultData.objects.get(id=request.session['idx'])
+                todaydata.answer = answer
+                todaydata.query = query
+                todaydata.save()
+
+            elif label == "Specify":
+                specifydata = Specify()
+                specifydata.resultdata = ResultData.objects.get(id=request.session['idx'])
+                specifydata.answer = answer
+                specifydata.query = query
+                specifydata.save()
+
+            else:
+                comparedata = Compare()
+                comparedata.resultdata = ResultData.objects.get(id=request.session['idx'])
+                comparedata.answer = answer
+                comparedata.query = query
+                comparedata.save()
+
         return redirect('confirm')
-        # return HttpResponseRedirect(reverse('confirm'))
+    
 
     else:
-        idx = ResultData.objects.filter(checked__isnull = True)[0].id
+        try:
+            idx = ResultData.objects.filter(checked__isnull = True)[0].id
+        except IndexError:
+            return HttpResponse('검수할 데이터가 없습니다.')
 
         request.session['idx'] = idx
         
         cf_data = ResultData.objects.get(id=idx)
         cf_query = cf_data.data
-        cf_query = cf_query[2:-2]
         cf_answer = cf_data.answer
         cf_label = cf_data.label
         cf_dsc = cf_data.q_dsc
+        cf_survey_date = cf_data.survey_date
 
-        vis_date_1, vis_stepcount_1, vis_date_2, vis_stepcount_2, legend_value, y_value = confirm_vis_data(cf_label, cf_query, cf_dsc)
 
-        
+        start_date = []
+        end_date = []
+        if cf_label == 'Compare':
+            start_date.append(cf_data.start_date_1)
+            start_date.append(cf_data.start_date_2)
+            end_date.append(cf_data.end_date_1)
+            end_date.append(cf_data.end_date_2)
+        else:
+            start_date.append(cf_data.start_date_1)
+            end_date.append(cf_data.end_date_1)
+
+        request.session['cf_label'] = cf_label
+        request.session['cf_answer'] = cf_answer
+        request.session['cf_query'] = cf_query
+
+        vis_date_1, vis_stepcount_1, vis_date_2, vis_stepcount_2, legend_value, y_value = confirm_vis_data(cf_label, cf_dsc, start_date, end_date)
+
+        cf_query = cf_query[2:-2]
 
         context = {
             'cf_answer' : cf_answer,
             'cf_label' : cf_label,
             'cf_dsc' : cf_dsc,
-            'cf_query' : cf_query,
+            'cf_survey_date' : cf_survey_date,
+            'cf_query' : cf_query.split('", "'),
             'legend_value' : legend_value,
             'y_value' : y_value,
             'date_1' : vis_date_1, 
@@ -428,39 +503,63 @@ def confirm(request):
         return render(request, 'confirm/confirm.html', context)
 
 # 검수 페이지 시각화 데이터 처리
-def confirm_vis_data(cf_label, cf_query, cf_dsc):
-    date_1 = []
-    stepcount_1 = []
-    date_2 = []
-    stepcount_2 = []
-    if cf_label == "Compare":
-        cf_query = cf_query.split('", "')
-        for p in StepCountData.objects.raw(cf_query[0]):
-            date_1.append(p.date)
-            stepcount_1.append(p.stepcount)
-        for p in StepCountData.objects.raw(cf_query[1]):
-            date_2.append(p.date)
-            stepcount_2.append(p.stepcount)
-        start_date = []
-        end_date = []
-        start_date.append(date_1[0])
-        start_date.append(date_2[0])
-        end_date.append(date_1[-1])
-        end_date.append(date_2[-1])
+def confirm_vis_data(cf_label, cf_dsc, start_date, end_date):
+    vis_date_1 = []
+    vis_stepcount_1 = []
+    vis_date_2 = []
+    vis_stepcount_2 = []
+    
+    if cf_label == 'Compare':
+        date, stepcount = date_stepcount_data(start_date, end_date)
+        vis_date_1, vis_stepcount_1 = compare_vis_data(date[0], stepcount[0], cf_dsc)
+        vis_date_2, vis_stepcount_2 = compare_vis_data(date[1], stepcount[1], cf_dsc)
+  
+        vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
+        vis_date_2, vis_stepcount_2 = str_date(vis_date_2, vis_stepcount_2)
 
-        date_1, stepcount_1 = compare_vis_data(date_1, stepcount_1, cf_dsc)
-        date_2, stepcount_2 = compare_vis_data(date_2, stepcount_2, cf_dsc)
+        legend_value, y_value = create_legend_value(start_date, end_date, cf_label)
 
-        date_1, stepcount_1 = str_date(date_1, stepcount_1)
-        date_2, stepcount_2 = str_date(date_2, stepcount_2)
     else:
-        for p in StepCountData.objects.raw(cf_query):
-            date_1.append(p.date)
-            stepcount_1.append(p.stepcount)
-        start_date, end_date = date_1[0], date_1[-1]
-        date_1, stepcount_1 = today_vis_data(date_1, stepcount_1)
+        date, stepcount = date_stepcount_data(start_date[0], end_date[0])
+        vis_date_1, vis_stepcount_1 = today_vis_data(date, stepcount)
+        vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
+        legend_value, y_value = create_legend_value(start_date[0], end_date[0], cf_label)
+    
+    return vis_date_1, vis_stepcount_1, vis_date_2, vis_stepcount_2, legend_value, y_value
 
-    # 범례값 
-    legend_value, y_value = create_legend_value(start_date, end_date, cf_label)
 
-    return date_1, stepcount_1, date_2, stepcount_2, legend_value, y_value
+# todaydata export csv
+def today_exportcsv(request):
+    today_resultdata = Today.objects.all()
+    response = HttpResponse('text/csv')
+    response['Content-Disposition'] = 'attachment; filename=today_resultdata.csv'
+    writer = csv.writer(response)
+    writer.writerow(['Resultdata', 'Answer', 'Query'])
+    results = today_resultdata.values_list('resultdata', 'answer', 'query')
+    for rlt in results:
+        writer.writerow(rlt)
+    return response
+
+# specifydata export csv
+def specify_exportcsv(request):
+    specify_resultdata = Specify.objects.all()
+    response = HttpResponse('text/csv')
+    response['Content-Disposition'] = 'attachment; filename=specify_resultdata.csv'
+    writer = csv.writer(response)
+    writer.writerow(['Resultdata', 'Answer', 'Query'])
+    results = specify_resultdata.values_list('resultdata', 'answer', 'query')
+    for rlt in results:
+        writer.writerow(rlt)
+    return response
+
+# comparedata export csv
+def compare_exportcsv(request):
+    compare_resultdata = Compare.objects.all()
+    response = HttpResponse('text/csv')
+    response['Content-Disposition'] = 'attachment; filename=compare_resultdata.csv'
+    writer = csv.writer(response)
+    writer.writerow(['Resultdata', 'Answer', 'Query'])
+    results = compare_resultdata.values_list('resultdata', 'answer', 'query')
+    for rlt in results:
+        writer.writerow(rlt)
+    return response
