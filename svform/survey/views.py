@@ -340,8 +340,7 @@ def maincode(page_index, q_list):
         vis_date_2, vis_stepcount_2 = compare_vis_data(date[1], stepcount[1], description)
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
         vis_date_2, vis_stepcount_2 = str_date(vis_date_2, vis_stepcount_2)
-        data.append(createqurey(description, start_date[0], end_date[0]))
-        data.append(createqurey(description, start_date[1], end_date[1]))
+        data.append(createqurey(description, start_date, end_date))
     else:
         vis_date_1, vis_stepcount_1 = today_vis_data(date, stepcount)
         vis_date_1, vis_stepcount_1 = str_date(vis_date_1, vis_stepcount_1)
@@ -351,10 +350,11 @@ def maincode(page_index, q_list):
 
 # 쿼리 생성 함수  
 def createqurey(description, start_date, end_date):
-    day = (end_date - start_date).days 
     if description == '일일 걸음 수':
+        day = (end_date - start_date).days 
         return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + str(day) + " days')  and date('now')"
-    elif description == '주별 평균 걸음 수': 
+    elif description == '주별 평균 걸음 수': # 수정 필요
+        day = (end_date - start_date).days 
         return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-" + str(day) + " days', 'weekday 1')  and date('now')"
     elif description == '월별 평균 걸음 수': 
         month = str((end_date.year - start_date.year) * 12 + end_date.month - start_date.month)
@@ -380,7 +380,7 @@ def createqurey(description, start_date, end_date):
     elif description == '최근 12달':
         return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-12 month', '+1 days')  and date('now')"
     elif description == '저번주':
-        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-7 days', 'weekday 1')  and date('now', '-7 days','weekday 0')"
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-14 days', 'weekday 1')  and date('now', '-7 days','weekday 0')"
     elif description == '저번달':
         return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-1 month', 'start of month')  and date('now', 'start of month', '-1 days')"
     elif description == 'n월':
@@ -393,23 +393,21 @@ def createqurey(description, start_date, end_date):
     elif description == "n월 m일부터 n'월 m'일까지":
         return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and '" + str(end_date) + "'"
     elif description == "주별 비교":
-        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+6 days')"
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date[0]) + "' and date('" + str(start_date[0]) + "', '+6 days') or date BETWEEN '" + str(start_date[1]) + "' and date('" + str(start_date[1]) + "', '+6 days')"
     elif description == "월별 비교": 
-        if end_date == datetime.date.today():
-            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('now')"
+        if end_date[0] == datetime.date.today():
+            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', 'start of month') and date('now') or date BETWEEN '" + str(start_date[1]) + "' and date('" + str(start_date[1]) + "', '+1 month', '-1 days')"
         else:
-            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+1 month', '-1 days')"
+            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date[0]) + "' and date('" + str(start_date[0]) + "', '+1 month', '-1 days') or date BETWEEN '" + str(start_date[1]) + "' and date('" + str(start_date[1]) + "', '+1 month', '-1 days')"
     elif description == "연도별 비교": 
-        if end_date == datetime.date.today():
-            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('now')"
-        else:
-            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+12 month', '-1 days')"
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date[0]) + "' and date('now') or date BETWEEN '" + str(start_date[1]) + "' and date('" + str(start_date[1]) + "', '+12 month', '-1 days')"
+    elif description == "연도별 월별 비교":
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date[0]) + "' and date('" + str(start_date[0]) + "', '+1 month', '-1 days') or date BETWEEN '" + str(start_date[1]) + "' and date('" + str(start_date[1]) + "', '+1 month', '-1 days')"
+    elif description == "이번주 저번주 비교": 
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', '-7 days', 'weekday 1') and date('now') or date BETWEEN date('now', '-14 days', 'weekday 1') and date('now', '-7 days', 'weekday 0')"
     else: 
-        if end_date == datetime.date.today():
-            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('now')"
-        else:
-            return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN '" + str(start_date) + "' and date('" + str(start_date) + "', '+1 month', '-1 days')"
-
+        return "SELECT * FROM survey_stepcountdata WHERE date BETWEEN date('now', 'start of month') and date('now') or date BETWEEN date('now', 'start of month', '-1 month') and date('now', 'start of month', '-1 days')"
+        
 
 # confirm page
 @csrf_exempt
