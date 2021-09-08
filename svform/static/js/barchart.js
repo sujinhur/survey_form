@@ -9,9 +9,9 @@ for(var i=0; i < date_1.length; i++) {
 console.log(dataset)
 
 // set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 100, left: 80},
-    width = 1400 - margin.left - margin.right,
-    height = 450 - margin.top - margin.bottom;
+var margin = {top: 50, right: 30, bottom: 80, left: 130},
+  width = 1100 - margin.left - margin.right,
+  height = 500 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#chart")
@@ -34,8 +34,11 @@ svg.append("g")
   .selectAll("text")
   .style("font-size", "13px")
   .attr('transform', function(d){
-    if(dataset.length >= 14 && dataset[0].name.length >= 5 || dataset[0].name.length >= 13){
-      return "rotate(-15)"
+    if(dataset[0].name.length >= 13){
+      return "rotate(-25)"
+    }
+    else if(dataset.length >= 14 && dataset[0].name.length >= 5){
+      return "rotate(-50)"
     }
   })
   .attr('y', 12)
@@ -96,7 +99,7 @@ svg.selectAll("rect")
 svg.append("text")
     .attr("text-anchor", "center")
     .attr("transform", "rotate(-90)")
-    .attr("y", -margin.left+15)
+    .attr("y", -margin.left+80)
     .attr("x", -margin.top-150)
     .style("font-size", "16px") 
     .text(y_value)

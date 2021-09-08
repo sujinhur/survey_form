@@ -106,6 +106,7 @@ def problem(request, page_index):
             'stepcount_2':vis_stepcount_2,
             'legend_value':legend_value,
             'y_value':y_value,
+            'description':description,
         }
 
         return render(request, 'survey/problem.html', context)
@@ -151,9 +152,9 @@ def exportcsv_phnum(request):
 
 # 랜덤 db_list 생성하기
 def random_dblist():
-    today_db_list = random.sample(range(1,14), 5)
-    specify_db_list = random.sample(range(14,20), 5)
-    compare_db_list = random.sample(range(20,26),5) 
+    today_db_list = random.sample([4, 5, 6, 7, 8, 10, 11, 12, 13], 5)
+    specify_db_list = [14, 15, 16, 17, 19]
+    compare_db_list = random.sample(range(20,26),5)  
     db_index = today_db_list + specify_db_list + compare_db_list 
     random.shuffle(db_index)
     return db_index

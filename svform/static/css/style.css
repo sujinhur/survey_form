@@ -15,3 +15,9 @@ h1, h2 {
     margin-left: 1%;
     margin-right: 1%;
 }
+
+img {
+    width: 270px;
+    height: 500px;
+    object-fit: contain;
+  }

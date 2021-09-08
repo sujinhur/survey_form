@@ -24,9 +24,9 @@ data_min.push({'value' : d3.min(dataset1, d => d.value)});
 
 
 // 기본적인 마진값
-var margin = {top: 10, right: 30, bottom: 60, left: 100},
-    width = 1000 - margin.left - margin.right,
-    height = 450 - margin.top - margin.bottom
+var margin = {top: 10, right: 30, bottom: 60, left: 130},
+  width = 1100 - margin.left - margin.right,
+  height = 500 - margin.top - margin.bottom
 
 // canvas 사이즈
 var svg = d3
@@ -172,7 +172,7 @@ legend.append("text")
 svg.append("text")
   .attr("text-anchor", "center")
   .attr("transform", "rotate(-90)")
-  .attr("y", -margin.left + 140)
-  .attr("x", -margin.top-200)
+  .attr("y", -margin.left + 210)
+  .attr("x", -margin.top-230)
   .style("font-size", "16px") 
   .text(y_value)

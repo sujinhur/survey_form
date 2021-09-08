@@ -12,12 +12,88 @@
 
     <div class = "container">
         <div class="row">
-            <h3 style="line-height: 150%;">Q{{ page_index }}. 아래의 시각화는 {{ date_period }}에 해당하는 기간에 대한 걸음수를 나타낸 것입니다. 이 시각화를 보기위해 어떤 질문을 할지 입력란에 작성해주세요. 
-                <small>(시각화는 일별, 주별 평균, 월별 평균 등으로 나타납니다.)</small></h3> 
+            <h3 style="line-height: 150%;">Q{{ page_index }}. 아래의 모바일 화면(왼쪽 이미지)은 버튼을 선택하는 과정을 나타내고 있습니다. 
+                그리고 오른쪽의 그래프는 모바일 화면의 결과로 {{ date_period }}에 해당하는 기간을 나타내고 있습니다. </h3> 
+            <h3 style="line-height: 150%;">
+                여러분은 이 과정(모바일 화면에서 버튼을 선택하여 결과를 얻는 과정)을 챗봇에게 묻는다면 어떻게 물어보시겠습니까? 응답란에 입력해주시기 바랍니다.
+            </h3>
         </div>
     
-        <div class="d-grid justify-content-md-center">
-            <div class="col-md-8" id="chart"></div>
+        <div class="row">
+            <div class="col-md-2">
+                {% if description == "최근 1주" %}
+                    <img src="/static/img/option/1주.png">
+                {% elif description == "최근 2주" %}
+                    <img src="/static/img/option/2주.png">
+                {% elif description == "최근 3주" %}
+                    <img src="/static/img/option/3주.png">
+                {% elif description == "최근 4주" %}
+                    <img src="/static/img/option/4주.png">
+                {% elif description == "이번달" %}
+                    <img src="/static/img/option/이번달.png">
+                {% elif description == "최근 2달" %}
+                    <img src="/static/img/option/2개월.png">
+                {% elif description == "최근 3달" %}
+                    <img src="/static/img/option/3개월.png">
+                {% elif description == "최근 6달" %}
+                    <img src="/static/img/option/6개월.png">
+                {% elif description == "최근 12달" %}
+                    <img src="/static/img/option/12개월.png">
+
+                {% elif description == "저번주" %}
+                    <img src="/static/img/option/저번주.png">
+                {% elif description == "저번달" %}
+                    <img src="/static/img/option/저번달.png">
+                {% elif description == "n월" %}
+                    
+                    {% if date_1.0|slice:"0:2" == "1월" %}
+                        <img src="/static/img/option/N월/1월.png"> 
+                    {% elif date_1.0|slice:"0:2" == "2월" %}
+                        <img src="/static/img/option/N월/2월.png">
+                    {% elif date_1.0|slice:"0:2" == "3월" %}
+                        <img src="/static/img/option/N월/3월.png">
+                    {% elif date_1.0|slice:"0:2" == "4월" %}
+                        <img src="/static/img/option/N월/4월.png">
+                    {% elif date_1.0|slice:"0:2" == "5월" %}
+                        <img src="/static/img/option/N월/5월.png">
+                    {% elif date_1.0|slice:"0:2" == "6월" %}
+                        <img src="/static/img/option/N월/6월.png">
+                    {% elif date_1.0|slice:"0:2" == "7월" %}
+                        <img src="/static/img/option/N월/7월.png">
+                    {% elif date_1.0|slice:"0:2" == "8월" %}
+                        <img src="/static/img/option/N월/8월.png">
+                    {% elif date_1.0|slice:"0:2" == "9월" %}
+                        <img src="/static/img/option/N월/9월.png">
+                    {% elif date_1.0|slice:"0:2" == "10월" %}
+                        <img src="/static/img/option/N월/10월.png">
+                    {% elif date_1.0|slice:"0:2" == "11월" %}
+                        <img src="/static/img/option/N월/11월.png">
+                    {% else %}
+                        <img src="/static/img/option/N월/12월.png">
+                    {% endif %}
+                    
+                {% elif description == "n월 ~ m월" %}
+                    <img src="/static/img/option/N월 ~ M월.png">
+                {% elif description == "n월 m일부터 n'월 m'일까지" %}
+                    <img src="/static/img/option/특정기간.png"> 
+
+                {% elif description == "주별 비교" %}
+                    <img src="/static/img/option/비교/주별.png">
+                {% elif description == "월별 비교" %}
+                    <img src="/static/img/option/비교/월별.png">
+                {% elif description == "연도별 비교" %}
+                    <img src="/static/img/option/비교/연도별.png">
+                {% elif description == "연도별 월별 비교" %}
+                    <img src="/static/img/option/비교/연도별월별.png">
+                {% elif description == "이번주 저번주 비교" %}
+                    <img src="/static/img/option/비교/이번주저번주.png">
+                {% elif description == "이번달 저번달 비교" %}
+                    <img src="/static/img/option/비교/이번달저번달.png">
+                {% endif %}
+                  
+            </div>
+
+            <div class="col-md-10" id="chart"></div>
         </div>
  
         <form action="{% url 'problem' next_page_index %}" method="post">
