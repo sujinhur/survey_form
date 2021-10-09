@@ -12,11 +12,13 @@
 
     <div class = "container">
         <div class="row">
-            <h3 style="line-height: 150%;">Q{{ page_index }}. 아래의 모바일 화면(왼쪽 이미지)은 버튼을 선택하는 과정을 나타내고 있습니다. 
-                그리고 오른쪽의 그래프는 모바일 화면의 결과로 {{ date_period }}에 해당하는 기간을 나타내고 있습니다. </h3> 
-            <h3 style="line-height: 150%;">
-                여러분은 이 과정(모바일 화면에서 버튼을 선택하여 결과를 얻는 과정)을 챗봇에게 묻는다면 어떻게 물어보시겠습니까? 응답란에 입력해주시기 바랍니다.
-            </h3>
+            <h4 style="line-height: 150%;">Q{{ page_index }}.  
+                아래의 그림은 모바일 화면에서 버튼을 선택하여 오른쪽 그림과 같은 결과를 얻는 과정을 나타내고 있습니다. 
+                이 과정을 챗봇에게 묻는다면 어떻게 물어볼지 응답란에 입력해주시기 바랍니다. 
+                 </h4> 
+            <h5 style="line-height: 150%;">
+                (참고) 오른쪽 그래프는 {{ date_period }}에 해당하는 기간을 나타내고 있습니다.
+            </h5>
         </div>
     
         <div class="row">
@@ -99,7 +101,7 @@
         <form action="{% url 'problem' next_page_index %}" method="post">
             {% csrf_token %}
             <div class="row">
-                <textarea class="form-control-lg" placeholder="텍스트를 입력해주세요" rows="5" name="answer" id="answer" required></textarea>
+                <textarea class="form-control-lg" placeholder="텍스트를 입력해주세요" rows="5" name="answer" id="answer" minlength = "5" required></textarea>
             </div>
             
             <div class="d-grid col-4 mx-auto">

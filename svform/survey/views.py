@@ -22,7 +22,8 @@ def example(request):
 
 # 문제 예시 페이지
 def problem_example(request):
-    return render(request, 'survey/problem_example.html')
+    show_ex = random.randint(0,1)
+    return render(request, 'survey/problem_example.html', context={'show_ex':show_ex})
 
 # 주의사항 페이지
 def attention(request):

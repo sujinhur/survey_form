@@ -8,17 +8,32 @@
             <h2 class="text-center">PROBLEM EXAMPLE</h2>
         </div>
         <div class="row d-grid col-6 mx-auto text-center">
-            <p class="lead"><strong>따라서 <u>본 설문에서는 특정기간에 대한 걸음 수 시각화가 주어질 것입니다. 설문의 문제 유형은 모두 아래의 이미지와 같으며,</u> 
-                여러분은 문제에 보여지는 시각화를 보시고 해당 기간의 시각화를 보기 위해 어떻게 질문할지 입력란에 입력해주시면 됩니다.
-            </strong></p>
-            <p class="lead"><strong>아래의 이미지로 예를 들어보겠습니다. 오늘이 9월 6일이고, 왼쪽 모바일 화면의 버튼을 터치해 시각화가 8월 31일부터 오늘까지의 걸음수를 나타내고 있다고 가정한다면, 
-                입력란에는 <u><br>‘최근 1주일 걸음 수 보여줘’,  <br>‘최근 7일동안 얼마나 걸었어?’<br></u>와 같은 질문을 문제당 하나씩 입력해주시면 됩니다.
-            </strong></p>
-        </div>
-        <div class="row d-grid col-8 mx-auto text-center">
-            <img src="/static/img/예시 이미지.png">
+            <p class="lead"><strong>본 설문의 문제 유형은 아래와 같으며, 
+                여러분은 문제에 보여지는 과정을 보시고 해당 기간의 시각화를 보기 위해 어떻게 질문할지 응답란에 입력해주시면 됩니다.</strong></p>     
         </div>
         
+        {% if show_ex == 0 %}
+        <div class="row d-grid col-8 mx-auto text-center">
+            <img src="/static/img/비교예시.PNG">
+        </div>
+        <div class="row d-grid col-8 mx-auto text-center">
+            <p class="lead"><strong>위의 이미지를 예로 들어보겠습니다. 위의 이미지는 모바일 화면에서 <u>[비교기간 검색]의 [연도별] 버튼을 터치하여 오른쪽 시각화를 보게되는 과정입니다.</u> 
+                여기에서 여러분은 <u>‘2021년과 2020년도 걸음수 비교해줘’</u>와 같은 질문을 입력해주시면 됩니다. 
+                최대한 실생활에서 사용할만한 자연스러운 질문으로 답변해주세요.</strong></p>
+        
+        </div>
+        {% else %}
+        <div class="row d-grid col-8 mx-auto text-center">
+            <img src="/static/img/1주예시.PNG">
+        </div>
+        <div class="row d-grid col-8 mx-auto text-center">
+            <p class="lead"><strong>위의 이미지를 예로 들어보겠습니다. 위의 이미지는 모바일 화면에서 <u>[1주] 버튼을 터치하여 오른쪽 시각화를 보게되는 과정입니다. </u>
+                여기에서 여러분은 <u>‘최근 1주일 동안 얼마나 걸었는지 보여줘’</u>와 같은 질문을 입력해주시면 됩니다. 
+                최대한 실생활에서 사용할만한 자연스러운 질문으로 답변해주세요.</strong></p>
+        
+        </div>
+        {% endif %}
+
         <div class="row d-grid col-6 mx-auto text-center">
             <p class="lead"><strong>'NEXT' 버튼을 클릭해주시기 바랍니다.</strong></p>
         </div>

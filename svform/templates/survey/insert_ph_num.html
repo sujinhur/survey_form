@@ -17,14 +17,14 @@
 
     <div class="row d-grid col-6 mx-auto text-center">
             
-        <p  class="lead"><strong>설문에 응해주셔서 감사합니다. 추첨을 통해 기프티콘을 증정하오니 아래 문항에 휴대폰 번호를 기재한 후 'SUBMIT' 버튼을 클릭해주시기 바랍니다. </strong></p>
-        <p  class="lead"><strong>만약 원하지 않으시면 바로 'SUBMIT'버튼을 클릭해주시기 바랍니다.</strong></p>
+        <p  class="lead"><strong>설문에 응해주셔서 감사합니다. <br>설문조사 완료자에 한하여 리워드를 제공합니다. 
+            리워드 제공을 위해 아래의 응답란에 휴대폰 번호를 입력해주시기 바랍니다. </strong></p>
     </div>
 
     <form method="post">
         {% csrf_token %}
         <div class="row d-grid col-6 mx-auto text-center">
-            <input type="text" class="form-control-lg" placeholder="'-'를 제외하고 숫자만 입력해주세요." name="ph_num">   
+            <input type="text" class="form-control-lg" placeholder="'-'를 제외하고 숫자만 입력해주세요." name="ph_num"id="ph_num" minlength="10" required>   
         </div>
         
         <div class="d-grid col-4 mx-auto">
@@ -34,5 +34,22 @@
     </form>
 
 </div>
+
+<script>
+    const ph_num = document.getElementById('ph_num');
+
+    ph_num.addEventListener('invalid', e => {
+    // 필수 항목을 누락한 경우
+    if (ph_num.validity.valueMissing) {
+        ph_num.setCustomValidity('해당 문항은 필수 항목입니다.');
+
+    // 데이터 유효성 검사를 통과한 경우
+    } else {
+        ph_num.setCustomValidity('');
+    }
+  })
+
+  
+</script>
 
 {% endblock %}
